@@ -9,6 +9,7 @@ public class BumperController : MonoBehaviour
 
     public GameObject forceRing;
     private Vector3 originalForceRingSize;
+    private float ringAlpha = 1.0f;
 
     int layerMask = 1 << 0;
 
@@ -58,6 +59,7 @@ public class BumperController : MonoBehaviour
             elapsingTimeToActivation -= Time.fixedDeltaTime;
             redValue -= .01f;
             spriteRendererComponent.color = new Color(1.0f, redValue, redValue);
+            forceRing.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
         }
 
         if (elapsingTimeToActivation <= 0.0f)
@@ -72,7 +74,10 @@ public class BumperController : MonoBehaviour
             increasingForceRange += forceRangeGrowthRate * Time.fixedDeltaTime;
             forceRing.transform.localScale += new Vector3(Mathf.Sqrt(forceRangeGrowthRate) / 3.14f / 2, 
                 Mathf.Sqrt(forceRangeGrowthRate) / 3.14f / 2, 0.0f) * Time.fixedDeltaTime;
-            //forceRing.gameObject.GetComponent<SpriteRenderer>().color = new Color( 0.1f;
+            ringAlpha -= .02f;
+            forceRing.gameObject.GetComponent<SpriteRenderer>().color = new Color(forceRing.gameObject.GetComponent<SpriteRenderer>().color.r,
+                forceRing.gameObject.GetComponent<SpriteRenderer>().color.g, forceRing.gameObject.GetComponent<SpriteRenderer>().color.b,
+                ringAlpha);
             PushFromCenter();
         }
 
