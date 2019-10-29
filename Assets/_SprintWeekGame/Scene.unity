@@ -465,11 +465,9 @@ MonoBehaviour:
   m_wallMask:
     serializedVersion: 2
     m_Bits: 512
-  m_scoreZoneMask:
-    serializedVersion: 2
-    m_Bits: 1024
   m_hasBounced: 0
   m_maxLaunchForce: 150
+  m_minLaunchForce: 0
   m_chargeUpCurve:
     serializedVersion: 2
     m_Curve:
@@ -496,8 +494,16 @@ MonoBehaviour:
     m_RotationOrder: 4
   m_speedChargeUpTime: 1
   m_bounceResetTime: 1
+  m_particleSystemPrefab: {fileID: 9024055399290727043, guid: 177ceef774d4e8f4f9fc4706cbde049c,
+    type: 3}
   m_aimObject: {fileID: 1091977415}
   m_crosshairDistance: 2
+  m_playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  m_lastHitPlayer: {fileID: 0}
+  m_pushForce: 0
+  m_pushRadius: 0
 --- !u!4 &531924734
 Transform:
   m_ObjectHideFlags: 0
