@@ -47,7 +47,6 @@ public class PlayerMovementController : MonoBehaviour
             {
                 OnAimInput();
             }
-
         }
 
         if (m_aimInput.normalized.magnitude == 0)
