@@ -18,20 +18,22 @@ public class ScoreZone : MonoBehaviour
         }
     }
 
-    private void Score()
+    private void Score(PlayerGameComponent p_scoredPlayer)
     {
-        Debug.Log("score");
+        
+
+        PlayerManager.m_instance.KillPlayer(p_scoredPlayer);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (CheckCollisionLayer(m_playerMask, collision.gameObject))
         {
-            PlayerMovementController player = collision.gameObject.GetComponent<PlayerMovementController>();
+            PlayerMovementController player = collision.gameObject.GetComponentInParent<PlayerMovementController>();
 
             if (player.m_hasBounced)
             {
-                Score();
+                Score(player.GetComponentInParent<PlayerGameComponent>());
             }
         }
     }

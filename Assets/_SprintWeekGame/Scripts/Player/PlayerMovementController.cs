@@ -110,6 +110,8 @@ public class PlayerMovementController : MonoBehaviour
 
         while (m_isAiming)
         {
+            Debug.Log(currentLaunchForce);
+
             t += Time.deltaTime;
 
             float progress = m_chargeUpCurve.Evaluate(t / m_speedChargeUpTime);
@@ -144,6 +146,26 @@ public class PlayerMovementController : MonoBehaviour
                 m_hasBounced = false;
                 m_bounceResetTimer = 0;
             }
+        }
+    }
+
+    public bool CheckCollisionLayer(LayerMask p_layerMask, GameObject p_object)
+    {
+        if (p_layerMask == (p_layerMask | (1 << p_object.layer)))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (CheckCollisionLayer(m_wallMask, collision.gameObject))
+        {
+            m_hasBounced = true;
         }
     }
 }
