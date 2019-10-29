@@ -15,6 +15,7 @@ public class PlayerMovementController : MonoBehaviour
     public bool m_hasBounced;
 
     public float m_maxLaunchForce;
+    public float m_minLaunchForce;
 
     public AnimationCurve m_chargeUpCurve;
     public float m_speedChargeUpTime;
@@ -32,6 +33,15 @@ public class PlayerMovementController : MonoBehaviour
     private Vector2 m_lastAim;
     private Vector3 m_lastPos;
 
+    public LayerMask m_playerMask;
+
+    [HideInInspector]
+    public PlayerGameComponent m_lastHitPlayer;
+
+    public float m_pushForce;
+
+    public float m_pushRadius;
+
     private void Start()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -39,12 +49,17 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Update()
     {
-        if (m_aimInput.normalized.magnitude > 0)
+        if (m_aimInput != Vector2.zero)
         {
             if (!m_isAiming)
             {
                 OnAimInput();
             }
+        }
+
+        if (!(m_aimInput.normalized.magnitude < 1))
+        {
+            m_lastAim = -m_aimInput;
         }
 
         if (m_aimInput.normalized.magnitude == 0)
@@ -67,7 +82,19 @@ public class PlayerMovementController : MonoBehaviour
 
     public void OnLaunchInputDown()
     {
-        //Launch();
+        Push();
+    }
+
+    private void OnAimInput()
+    {
+        m_isAiming = true;
+
+        StartCoroutine(ChargeMove());
+    }
+
+    private void ReleaseAimInput()
+    {
+        m_isAiming = false;
     }
 
     private void AimCrosshair()
@@ -90,18 +117,6 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-    private void OnAimInput()
-    {
-        m_isAiming = true;
-
-        StartCoroutine(ChargeMove());
-    }
-
-    private void ReleaseAimInput()
-    {
-        m_isAiming = false;
-    }
-
     private IEnumerator ChargeMove()
     {
         float t = 0;
@@ -110,15 +125,11 @@ public class PlayerMovementController : MonoBehaviour
 
         while (m_isAiming)
         {
-            Debug.Log(currentLaunchForce);
-
             t += Time.deltaTime;
 
             float progress = m_chargeUpCurve.Evaluate(t / m_speedChargeUpTime);
 
-            currentLaunchForce = Mathf.Lerp(0, m_maxLaunchForce, progress);
-
-            m_lastAim = -m_aimInput;
+            currentLaunchForce = Mathf.Lerp(m_minLaunchForce, m_maxLaunchForce, progress);
 
             yield return null;
         }
@@ -129,10 +140,24 @@ public class PlayerMovementController : MonoBehaviour
     private void Launch(float p_launchForce, Vector2 p_direction)
     {
         m_rigidbody.velocity = Vector2.zero;
-
         m_rigidbody.angularVelocity = 0f;
-
         m_rigidbody.AddForce(p_direction * p_launchForce, ForceMode2D.Impulse);
+    }
+
+    private void Push()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, m_pushRadius, m_playerMask);
+
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.gameObject != gameObject)
+            {
+                collider.GetComponentInParent<Rigidbody2D>().AddForce(-(transform.position - collider.transform.position) * m_pushForce, ForceMode2D.Impulse);
+            }
+        }
+
+        //m_rigidbody.velocity = Vector2.zero;
+        //m_rigidbody.angularVelocity = 0f;
     }
 
     private void ResetBounce()
@@ -166,6 +191,11 @@ public class PlayerMovementController : MonoBehaviour
         if (CheckCollisionLayer(m_wallMask, collision.gameObject))
         {
             m_hasBounced = true;
+        }
+
+        if (CheckCollisionLayer(m_playerMask, collision.gameObject))
+        {
+            m_lastHitPlayer = collision.gameObject.GetComponent<PlayerGameComponent>();
         }
     }
 }

@@ -20,9 +20,7 @@ public class ScoreZone : MonoBehaviour
 
     private void Score(PlayerGameComponent p_scoredPlayer)
     {
-        
-
-        PlayerManager.m_instance.KillPlayer(p_scoredPlayer);
+        PlayerManager.m_instance.ScorePlayer(p_scoredPlayer);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
