@@ -6,8 +6,6 @@ public class PlayerMovementController : MonoBehaviour
 {
     public LayerMask m_wallMask;
 
-    public LayerMask m_scoreZoneMask;
-
     Rigidbody2D m_rigidbody;
 
     private float m_launchForce;
@@ -145,42 +143,6 @@ public class PlayerMovementController : MonoBehaviour
             {
                 m_hasBounced = false;
                 m_bounceResetTimer = 0;
-            }
-        }
-    }
-
-    public bool CheckCollisionLayer(LayerMask p_layerMask, GameObject p_object)
-    {
-        if (p_layerMask == (p_layerMask | (1 << p_object.layer)))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private void Score()
-    {
-        Destroy(gameObject);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (CheckCollisionLayer(m_wallMask, collision.gameObject))
-        {
-            m_hasBounced = true;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (CheckCollisionLayer(m_scoreZoneMask, collision.gameObject))
-        {
-            if (m_hasBounced)
-            {
-                Score();
             }
         }
     }
