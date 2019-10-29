@@ -33,6 +33,8 @@ public class PlayerMovementController : MonoBehaviour
     private Vector2 m_lastAim;
     private Vector3 m_lastPos;
 
+    public float m_chargeDistance;
+
     public LayerMask m_playerMask;
 
     [HideInInspector]
@@ -42,9 +44,24 @@ public class PlayerMovementController : MonoBehaviour
 
     public float m_pushRadius;
 
+    private LineRenderer m_targetLine;
+
+    public GameObject m_partical;
+
+    public float m_launchBufferTime;
+    private float m_launchBufferTimer;
+
+    private Coroutine m_launchBufferCoroutine;
+
     private void Start()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
+
+        m_targetLine = GetComponent<LineRenderer>();
+
+        m_targetLine.enabled = false;
+
+        m_launchBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_launchBufferTimer = (x), m_launchBufferTime));
     }
 
     private void Update()
@@ -55,14 +72,14 @@ public class PlayerMovementController : MonoBehaviour
             {
                 OnAimInput();
             }
+
+            if (m_aimInput.magnitude > 0.7f)
+            {
+                m_lastAim = m_aimInput;
+            }
         }
 
-        if (!(m_aimInput.normalized.magnitude < 1))
-        {
-            m_lastAim = -m_aimInput;
-        }
-
-        if (m_aimInput.normalized.magnitude == 0)
+        if (m_aimInput == Vector2.zero)
         {
             if (m_isAiming)
             {
@@ -88,7 +105,6 @@ public class PlayerMovementController : MonoBehaviour
     private void OnAimInput()
     {
         m_isAiming = true;
-
         StartCoroutine(ChargeMove());
     }
 
@@ -99,7 +115,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private void AimCrosshair()
     {
-        float theta = Mathf.Atan2(-m_aimInput.y, -m_aimInput.x);
+        float theta = Mathf.Atan2(m_aimInput.y, m_aimInput.x);
 
         float aimDegrees = theta * Mathf.Rad2Deg;
 
@@ -117,22 +133,90 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-    private IEnumerator ChargeMove()
+    #region Input Buffering Code
+
+    private bool CheckBuffer(ref float p_bufferTimer, ref float p_bufferTime, Coroutine p_bufferTimerRoutine)
+    {
+        if (p_bufferTimer < p_bufferTime)
+        {
+            if (p_bufferTimerRoutine != null)
+            {
+                StopCoroutine(p_bufferTimerRoutine);
+            }
+
+            p_bufferTimer = p_bufferTime;
+
+            return true;
+        }
+        else if (p_bufferTimer >= p_bufferTime)
+        {
+            return false;
+        }
+
+        return false;
+    }
+
+    private bool CheckOverBuffer(ref float p_bufferTimer, ref float p_bufferTime, Coroutine p_bufferTimerRoutine)
+    {
+        if (p_bufferTimer >= p_bufferTime)
+        {
+            p_bufferTimer = p_bufferTime;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerator RunBufferTimer(System.Action<float> m_bufferTimerRef, float p_bufferTime)
     {
         float t = 0;
 
+        while (t < p_bufferTime)
+        {
+            t += Time.deltaTime;
+            m_bufferTimerRef(t);
+            yield return null;
+        }
+
+        m_bufferTimerRef(p_bufferTime);
+    }
+
+    #endregion
+
+    private IEnumerator ChargeMove()
+    {
+        m_targetLine.enabled = true;
+
+        float t = 0;
+
         float currentLaunchForce = 0;
+
+        LerpScale arrowLerp = m_aimObject.GetComponent<LerpScale>();
 
         while (m_isAiming)
         {
             t += Time.deltaTime;
 
             float progress = m_chargeUpCurve.Evaluate(t / m_speedChargeUpTime);
-
             currentLaunchForce = Mathf.Lerp(m_minLaunchForce, m_maxLaunchForce, progress);
+
+            Vector3 aimTarget = ((Vector3)m_lastAim.normalized * m_chargeDistance) + transform.position;
+            Vector3 targetPos = Vector3.Lerp(transform.position, aimTarget, progress);
+
+            m_aimObject.position = targetPos;
+
+            m_targetLine.SetPosition(0, transform.position);
+            m_targetLine.SetPosition(1, targetPos);
+
+            arrowLerp.FindLerpProgress(progress);
 
             yield return null;
         }
+
+        arrowLerp.ResetScale();
+
+        m_targetLine.enabled = false;
 
         Launch(currentLaunchForce, m_lastAim);
     }
@@ -190,12 +274,14 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (CheckCollisionLayer(m_wallMask, collision.gameObject))
         {
+            Instantiate(m_partical, transform.position, Quaternion.identity);
             m_hasBounced = true;
         }
 
         if (CheckCollisionLayer(m_playerMask, collision.gameObject))
         {
             m_lastHitPlayer = collision.gameObject.GetComponent<PlayerGameComponent>();
+
         }
     }
 }
