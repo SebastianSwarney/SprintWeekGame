@@ -30,4 +30,9 @@ public class LerpColor : MonoBehaviour
     {
         m_spriteRenderer.color = m_startColor;
     }
+
+    public void FindColorLerpProgress(Color p_startColor, Color p_endColor, float p_progress)
+    {
+        m_spriteRenderer.color = Color.Lerp(p_startColor, p_endColor, p_progress);
+    }
 }

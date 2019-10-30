@@ -109,6 +109,15 @@ public class PlayerMovementController : MonoBehaviour
             AimCrosshair();
         }
 
+        if (m_hasBounced)
+        {
+            gameObject.layer = 12;
+        }
+        else
+        {
+            gameObject.layer = 11;
+        }
+
         ResetBounce();
     }
 
@@ -238,7 +247,6 @@ public class PlayerMovementController : MonoBehaviour
 
 
             float progress2 = m_chargeUpCurve.Evaluate(m_aimSlowDownTimer / m_aimSlowDownTime);
-            //m_rigidbody.velocity = Vector3.Lerp(startVelocity, Vector3.zero, progress2);
 
             float aimSlowDownSpeed = Mathf.Lerp(0, m_aimSlowDownSpeed, progress2);
 
@@ -311,7 +319,9 @@ public class PlayerMovementController : MonoBehaviour
         {
             m_bounceResetTimer += Time.deltaTime;
 
-            m_bounceRechargeVisual.FindReverseProgress((m_bounceResetTimer / m_bounceResetTime));
+            //m_bounceRechargeVisual.FindReverseProgress((m_bounceResetTimer / m_bounceResetTime));
+
+            m_bounceRechargeVisual.FindColorLerpProgress(Color.red, Color.blue, m_bounceResetTimer / m_bounceResetTime);
 
             if (m_bounceResetTimer >= m_bounceResetTime)
             {
