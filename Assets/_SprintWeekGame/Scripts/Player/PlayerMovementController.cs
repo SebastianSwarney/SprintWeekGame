@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class PlayerMovementController : MonoBehaviour
 {
+    public enum MovementControllState {MovementEnabled, MovementDisabled}
+    public MovementControllState m_movementControll;
+
     public LayerMask m_wallMask;
 
-    Rigidbody2D m_rigidbody;
+    [HideInInspector]
+    public Rigidbody2D m_rigidbody;
 
     private float m_launchForce;
 
@@ -53,6 +57,10 @@ public class PlayerMovementController : MonoBehaviour
 
     private Coroutine m_launchBufferCoroutine;
 
+    public LerpColor m_bounceRechargeVisual;
+
+    public GameObject m_hitPlayerEffect;
+
     private void Start()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -66,28 +74,31 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Update()
     {
-        if (m_aimInput != Vector2.zero)
+        if (m_movementControll == MovementControllState.MovementEnabled)
         {
-            if (!m_isAiming)
+            if (m_aimInput != Vector2.zero)
             {
-                OnAimInput();
+                if (!m_isAiming)
+                {
+                    OnAimInput();
+                }
+
+                if (m_aimInput.magnitude > 0.7f)
+                {
+                    m_lastAim = m_aimInput;
+                }
             }
 
-            if (m_aimInput.magnitude > 0.7f)
+            if (m_aimInput == Vector2.zero)
             {
-                m_lastAim = m_aimInput;
+                if (m_isAiming)
+                {
+                    ReleaseAimInput();
+                }
             }
+
+            AimCrosshair();
         }
-
-        if (m_aimInput == Vector2.zero)
-        {
-            if (m_isAiming)
-            {
-                ReleaseAimInput();
-            }
-        }
-
-        AimCrosshair();
 
         ResetBounce();
     }
@@ -194,6 +205,8 @@ public class PlayerMovementController : MonoBehaviour
 
         LerpScale arrowLerp = m_aimObject.GetComponent<LerpScale>();
 
+        Vector2 startVelocity = m_rigidbody.velocity;
+
         while (m_isAiming)
         {
             t += Time.deltaTime;
@@ -203,6 +216,8 @@ public class PlayerMovementController : MonoBehaviour
 
             Vector3 aimTarget = ((Vector3)m_lastAim.normalized * m_chargeDistance) + transform.position;
             Vector3 targetPos = Vector3.Lerp(transform.position, aimTarget, progress);
+
+            //m_rigidbody.velocity = Vector3.Lerp(startVelocity, Vector2.zero, progress);
 
             m_aimObject.position = targetPos;
 
@@ -250,12 +265,33 @@ public class PlayerMovementController : MonoBehaviour
         {
             m_bounceResetTimer += Time.deltaTime;
 
+            m_bounceRechargeVisual.FindReverseProgress((m_bounceResetTimer / m_bounceResetTime));
+
             if (m_bounceResetTimer >= m_bounceResetTime)
             {
                 m_hasBounced = false;
                 m_bounceResetTimer = 0;
             }
         }
+    }
+
+    public void KillPlayer()
+    {
+        m_isAiming = false;
+
+        m_rigidbody.velocity = Vector2.zero;
+        m_rigidbody.angularVelocity = 0f;
+
+        m_rigidbody.simulated = false;
+
+        m_movementControll = MovementControllState.MovementDisabled;
+
+    }
+
+    public void Respawn()
+    {
+        m_rigidbody.simulated = true;
+        m_movementControll = MovementControllState.MovementEnabled;
     }
 
     public bool CheckCollisionLayer(LayerMask p_layerMask, GameObject p_object)
@@ -274,12 +310,17 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (CheckCollisionLayer(m_wallMask, collision.gameObject))
         {
+            iTween.ShakePosition(Camera.main.gameObject, Vector3.one / 2, 0.5f);
+
             Instantiate(m_partical, transform.position, Quaternion.identity);
             m_hasBounced = true;
         }
 
         if (CheckCollisionLayer(m_playerMask, collision.gameObject))
         {
+            iTween.ShakePosition(Camera.main.gameObject, Vector3.one, 0.5f);
+
+            Instantiate(m_hitPlayerEffect, transform.position, Quaternion.identity);
             m_lastHitPlayer = collision.gameObject.GetComponent<PlayerGameComponent>();
 
         }

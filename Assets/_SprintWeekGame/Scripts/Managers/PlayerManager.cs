@@ -6,6 +6,8 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager m_instance;
 
+    public PlayerGameComponent[] m_players;
+
     private void Awake()
     {
         if (m_instance == null)
@@ -18,16 +20,26 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        m_players = FindObjectsOfType<PlayerGameComponent>();
+    }
+
     public void ScorePlayer(PlayerGameComponent p_playerToKill)
     {
-        p_playerToKill.UpdateScore();
-
         StartCoroutine(RespawnPlayer(p_playerToKill));
     }
 
     private IEnumerator RespawnPlayer(PlayerGameComponent p_respawningPlayer)
     {
-        p_respawningPlayer.gameObject.SetActive(false);
+        
+
+        iTween.ShakePosition(Camera.main.gameObject, Vector3.one, 1f);
+
+        p_respawningPlayer.KillPlayer();
+
+        RoundManager.m_instance.CheckScore();
+
         float t = 0;
 
         while (t < p_respawningPlayer.m_respawnTime)
@@ -37,6 +49,5 @@ public class PlayerManager : MonoBehaviour
         }
 
         p_respawningPlayer.Respawn();
-        p_respawningPlayer.gameObject.SetActive(true);
     }
 }
