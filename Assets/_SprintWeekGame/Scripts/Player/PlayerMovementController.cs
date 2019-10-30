@@ -7,62 +7,68 @@ public class PlayerMovementController : MonoBehaviour
     public enum MovementControllState {MovementEnabled, MovementDisabled}
     public MovementControllState m_movementControll;
 
-    public LayerMask m_wallMask;
-
-    [HideInInspector]
-    public Rigidbody2D m_rigidbody;
-
-    private float m_launchForce;
-
-    private Vector2 m_aimInput;
-
-    public bool m_hasBounced;
-
+    [Header("Movement Properties")]
     public float m_maxLaunchForce;
     public float m_minLaunchForce;
-
     public AnimationCurve m_chargeUpCurve;
     public float m_speedChargeUpTime;
+    public float m_chargeVisualDistance;
+
     private float m_speedChargeUpTimer;
+    [Space]
 
+    [Header("Bounce Properties")]
+    public LayerMask m_playerMask;
+    public LayerMask m_wallMask;
     public float m_bounceResetTime;
+
+    [HideInInspector]
+    public bool m_hasBounced;
     private float m_bounceResetTimer;
+    [HideInInspector]
+    public PlayerGameComponent m_lastHitPlayer;
+    [Space]
 
+    [Header("Push Properties")]
+    public float m_pushForce;
+    public float m_pushRadius;
+    public float m_pushBufferTime;
+    public float m_pushTime;
+    public AnimationCurve m_pushCurve;
 
-    public Transform m_aimObject;
+    public LerpScale m_pushVisual;
+
+    private float m_pushBufferTimer;
+    private Coroutine m_pushBufferCorutine;
+
+    [Space]
+
+    [Header("Aim Properties")]
+    public Transform m_crosshair;
     public float m_crosshairDistance;
-
-    private bool m_isAiming;
+    public float m_aimSlowDownSpeed;
+    public float m_aimSlowDownTime;
+    private float m_aimSlowDownTimer;
 
     private Vector2 m_lastAim;
     private Vector3 m_lastPos;
+    private Vector2 m_aimInput;
+    private bool m_isAiming;
+    [Space]
 
-    public float m_chargeDistance;
 
-    public LayerMask m_playerMask;
 
-    [HideInInspector]
-    public PlayerGameComponent m_lastHitPlayer;
-
-    public float m_pushForce;
-
-    public float m_pushRadius;
-
-    private LineRenderer m_targetLine;
-
-    public GameObject m_partical;
-
-    public float m_launchBufferTime;
-    private float m_launchBufferTimer;
-
-    private Coroutine m_launchBufferCoroutine;
-
+    [Header("Visual Properties")]
+    public GameObject m_wallPartical;
+    public GameObject m_hitPlayerEffect;
     public LerpColor m_bounceRechargeVisual;
 
-    public GameObject m_hitPlayerEffect;
+    private LineRenderer m_targetLine;
+    [Space]
 
-    public float m_aimTimeToStop;
-    public float m_aimTimeTOStopTimer;
+
+    [HideInInspector]
+    public Rigidbody2D m_rigidbody;
 
     private void Start()
     {
@@ -72,7 +78,7 @@ public class PlayerMovementController : MonoBehaviour
 
         m_targetLine.enabled = false;
 
-        m_launchBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_launchBufferTimer = (x), m_launchBufferTime));
+        m_pushBufferCorutine = StartCoroutine(RunBufferTimer((x) => m_pushBufferTimer = (x), m_pushBufferTime));
     }
 
     private void Update()
@@ -113,7 +119,13 @@ public class PlayerMovementController : MonoBehaviour
 
     public void OnLaunchInputDown()
     {
-        Push();
+        if (m_movementControll == MovementControllState.MovementEnabled)
+        {
+            if (CheckOverBuffer(ref m_pushBufferTimer, ref m_pushBufferTime, m_pushBufferCorutine))
+            {
+                StartCoroutine(RunPush());
+            }
+        }
     }
 
     private void OnAimInput()
@@ -137,13 +149,13 @@ public class PlayerMovementController : MonoBehaviour
 
         if (m_aimInput.normalized.magnitude != 0)
         {
-            m_aimObject.rotation = Quaternion.Euler(0, 0, aimDegrees);
-            m_aimObject.position = transform.position + pCircle;
+            m_crosshair.rotation = Quaternion.Euler(0, 0, aimDegrees);
+            m_crosshair.position = transform.position + pCircle;
             m_lastPos = pCircle;
         }
         else
         {
-            m_aimObject.position = transform.position + m_lastPos;
+            m_crosshair.position = transform.position + m_lastPos;
         }
     }
 
@@ -206,24 +218,33 @@ public class PlayerMovementController : MonoBehaviour
 
         float currentLaunchForce = 0;
 
-        LerpScale arrowLerp = m_aimObject.GetComponent<LerpScale>();
+        LerpScale arrowLerp = m_crosshair.GetComponent<LerpScale>();
 
         Vector2 startVelocity = m_rigidbody.velocity;
+
+        m_aimSlowDownTimer = 0;
 
         while (m_isAiming)
         {
             t += Time.deltaTime;
 
+            m_aimSlowDownTimer += Time.deltaTime;
 
             float progress = m_chargeUpCurve.Evaluate(t / m_speedChargeUpTime);
             currentLaunchForce = Mathf.Lerp(m_minLaunchForce, m_maxLaunchForce, progress);
 
-            Vector3 aimTarget = ((Vector3)m_lastAim.normalized * m_chargeDistance) + transform.position;
+            Vector3 aimTarget = ((Vector3)m_lastAim.normalized * m_chargeVisualDistance) + transform.position;
             Vector3 targetPos = Vector3.Lerp(transform.position, aimTarget, progress);
 
-            m_rigidbody.AddForce(-m_rigidbody.velocity * 10, ForceMode2D.Force);
 
-            m_aimObject.position = targetPos;
+            float progress2 = m_chargeUpCurve.Evaluate(m_aimSlowDownTimer / m_aimSlowDownTime);
+            //m_rigidbody.velocity = Vector3.Lerp(startVelocity, Vector3.zero, progress2);
+
+            float aimSlowDownSpeed = Mathf.Lerp(0, m_aimSlowDownSpeed, progress2);
+
+            m_rigidbody.AddForce(-m_rigidbody.velocity * aimSlowDownSpeed, ForceMode2D.Force);
+
+            m_crosshair.position = targetPos;
 
             m_targetLine.SetPosition(0, transform.position);
             m_targetLine.SetPosition(1, targetPos);
@@ -247,20 +268,41 @@ public class PlayerMovementController : MonoBehaviour
         m_rigidbody.AddForce(p_direction * p_launchForce, ForceMode2D.Impulse);
     }
 
-    private void Push()
+    private IEnumerator RunPush()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, m_pushRadius, m_playerMask);
+        float t = 0;
+
+        while (t < m_pushTime)
+        {
+            t += Time.deltaTime;
+
+            float progress = m_pushCurve.Evaluate(t / m_pushTime);
+
+            float currentRaidus = Mathf.Lerp(0, m_pushRadius, progress);
+
+            Push(currentRaidus);
+            m_pushVisual.SetScaleRadius(currentRaidus);
+
+            yield return null;
+        }
+
+        m_pushVisual.ResetScale();
+
+        m_pushBufferCorutine = StartCoroutine(RunBufferTimer((x) => m_pushBufferTimer = (x), m_pushBufferTime));
+    }
+
+    private void Push(float p_radius)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, p_radius, m_playerMask);
 
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject != gameObject)
             {
+                collider.GetComponentInParent<PlayerMovementController>().OnPlayerHit();
                 collider.GetComponentInParent<Rigidbody2D>().AddForce(-(transform.position - collider.transform.position) * m_pushForce, ForceMode2D.Impulse);
             }
         }
-
-        //m_rigidbody.velocity = Vector2.zero;
-        //m_rigidbody.angularVelocity = 0f;
     }
 
     private void ResetBounce()
@@ -277,6 +319,12 @@ public class PlayerMovementController : MonoBehaviour
                 m_bounceResetTimer = 0;
             }
         }
+    }
+
+    public void OnPlayerHit()
+    {
+        m_aimSlowDownTimer = 0;
+        m_hasBounced = true;
     }
 
     public void KillPlayer()
@@ -314,19 +362,17 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (CheckCollisionLayer(m_wallMask, collision.gameObject))
         {
-            //iTween.ShakePosition(Camera.main.gameObject, Vector3.one / 4, 0.5f);
-
-            Instantiate(m_partical, transform.position, Quaternion.identity);
+            Instantiate(m_wallPartical, transform.position, Quaternion.identity);
             m_hasBounced = true;
         }
 
         if (CheckCollisionLayer(m_playerMask, collision.gameObject))
         {
-            //iTween.ShakePosition(Camera.main.gameObject, Vector3.one / 4, 0.5f);
-
             Instantiate(m_hitPlayerEffect, transform.position, Quaternion.identity);
             m_lastHitPlayer = collision.gameObject.GetComponent<PlayerGameComponent>();
+            m_hasBounced = true;
 
+            m_aimSlowDownTimer = 0;
         }
     }
 }
