@@ -61,6 +61,9 @@ public class PlayerMovementController : MonoBehaviour
 
     public GameObject m_hitPlayerEffect;
 
+    public float m_aimTimeToStop;
+    public float m_aimTimeTOStopTimer;
+
     private void Start()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -211,13 +214,14 @@ public class PlayerMovementController : MonoBehaviour
         {
             t += Time.deltaTime;
 
+
             float progress = m_chargeUpCurve.Evaluate(t / m_speedChargeUpTime);
             currentLaunchForce = Mathf.Lerp(m_minLaunchForce, m_maxLaunchForce, progress);
 
             Vector3 aimTarget = ((Vector3)m_lastAim.normalized * m_chargeDistance) + transform.position;
             Vector3 targetPos = Vector3.Lerp(transform.position, aimTarget, progress);
 
-            //m_rigidbody.velocity = Vector3.Lerp(startVelocity, Vector2.zero, progress);
+            m_rigidbody.AddForce(-m_rigidbody.velocity * 10, ForceMode2D.Force);
 
             m_aimObject.position = targetPos;
 
@@ -310,7 +314,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (CheckCollisionLayer(m_wallMask, collision.gameObject))
         {
-            iTween.ShakePosition(Camera.main.gameObject, Vector3.one / 2, 0.5f);
+            //iTween.ShakePosition(Camera.main.gameObject, Vector3.one / 4, 0.5f);
 
             Instantiate(m_partical, transform.position, Quaternion.identity);
             m_hasBounced = true;
@@ -318,7 +322,7 @@ public class PlayerMovementController : MonoBehaviour
 
         if (CheckCollisionLayer(m_playerMask, collision.gameObject))
         {
-            iTween.ShakePosition(Camera.main.gameObject, Vector3.one, 0.5f);
+            //iTween.ShakePosition(Camera.main.gameObject, Vector3.one / 4, 0.5f);
 
             Instantiate(m_hitPlayerEffect, transform.position, Quaternion.identity);
             m_lastHitPlayer = collision.gameObject.GetComponent<PlayerGameComponent>();

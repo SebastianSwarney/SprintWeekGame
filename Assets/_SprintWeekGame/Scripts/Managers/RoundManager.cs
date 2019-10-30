@@ -22,15 +22,15 @@ public class RoundManager : MonoBehaviour
 
     public void CheckScore()
     {
+        /*
         for (int i = 0; i < PlayerManager.m_instance.m_players.Length; i++)
         {
             if (PlayerManager.m_instance.m_players[i].m_currentScore >= m_scoreToWin)
             {
                 CameraController.m_instance.WinZoomToPlayer(i);
-
-                Debug.Log("player " + PlayerManager.m_instance.m_players[i].name + " won");
             }
         }
+        */
     }
 
 }
