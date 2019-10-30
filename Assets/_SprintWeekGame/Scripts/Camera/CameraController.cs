@@ -52,5 +52,7 @@ public class CameraController : MonoBehaviour
 
             yield return null;
         }
+
+        SceneManager.m_instance.LoadScene(SceneManager.m_instance.m_mainScene);
     }
 }
