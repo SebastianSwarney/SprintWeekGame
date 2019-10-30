@@ -20,11 +20,7 @@ public class PlayerMovementController : MonoBehaviour
     [Header("Bounce Properties")]
     public LayerMask m_playerMask;
     public LayerMask m_wallMask;
-    public float m_bounceResetTime;
 
-    [HideInInspector]
-    public bool m_hasBounced;
-    private float m_bounceResetTimer;
     [HideInInspector]
     public PlayerGameComponent m_lastHitPlayer;
     [Space]
@@ -40,6 +36,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private float m_pushBufferTimer;
     private Coroutine m_pushBufferCorutine;
+    private LerpColor m_pushVisualLerp;
 
     [Space]
 
@@ -61,7 +58,6 @@ public class PlayerMovementController : MonoBehaviour
     [Header("Visual Properties")]
     public GameObject m_wallPartical;
     public GameObject m_hitPlayerEffect;
-    public LerpColor m_bounceRechargeVisual;
 
     private LineRenderer m_targetLine;
     [Space]
@@ -75,6 +71,8 @@ public class PlayerMovementController : MonoBehaviour
         m_rigidbody = GetComponent<Rigidbody2D>();
 
         m_targetLine = GetComponent<LineRenderer>();
+
+        m_pushVisualLerp = m_pushVisual.GetComponent<LerpColor>();
 
         m_targetLine.enabled = false;
 
@@ -108,17 +106,6 @@ public class PlayerMovementController : MonoBehaviour
 
             AimCrosshair();
         }
-
-        if (m_hasBounced)
-        {
-            gameObject.layer = 12;
-        }
-        else
-        {
-            gameObject.layer = 11;
-        }
-
-        ResetBounce();
     }
 
     public void SetAimInput(Vector2 p_input)
@@ -278,6 +265,8 @@ public class PlayerMovementController : MonoBehaviour
 
     private IEnumerator RunPush()
     {
+        m_pushVisualLerp.ResetColor();
+
         float t = 0;
 
         while (t < m_pushTime)
@@ -289,10 +278,13 @@ public class PlayerMovementController : MonoBehaviour
             float currentRaidus = Mathf.Lerp(0, m_pushRadius, progress);
 
             Push(currentRaidus);
+            
             m_pushVisual.SetScaleRadius(currentRaidus);
 
             yield return null;
         }
+
+        m_pushVisualLerp.FindFadeProgress(1);
 
         m_pushVisual.ResetScale();
 
@@ -313,28 +305,9 @@ public class PlayerMovementController : MonoBehaviour
         }
     }
 
-    private void ResetBounce()
-    {
-        if (m_hasBounced)
-        {
-            m_bounceResetTimer += Time.deltaTime;
-
-            //m_bounceRechargeVisual.FindReverseProgress((m_bounceResetTimer / m_bounceResetTime));
-
-            m_bounceRechargeVisual.FindColorLerpProgress(Color.red, Color.blue, m_bounceResetTimer / m_bounceResetTime);
-
-            if (m_bounceResetTimer >= m_bounceResetTime)
-            {
-                m_hasBounced = false;
-                m_bounceResetTimer = 0;
-            }
-        }
-    }
-
     public void OnPlayerHit()
     {
         m_aimSlowDownTimer = 0;
-        m_hasBounced = true;
     }
 
     public void KillPlayer()
@@ -373,14 +346,12 @@ public class PlayerMovementController : MonoBehaviour
         if (CheckCollisionLayer(m_wallMask, collision.gameObject))
         {
             Instantiate(m_wallPartical, transform.position, Quaternion.identity);
-            m_hasBounced = true;
         }
 
         if (CheckCollisionLayer(m_playerMask, collision.gameObject))
         {
             Instantiate(m_hitPlayerEffect, transform.position, Quaternion.identity);
             m_lastHitPlayer = collision.gameObject.GetComponent<PlayerGameComponent>();
-            m_hasBounced = true;
 
             m_aimSlowDownTimer = 0;
         }

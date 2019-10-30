@@ -29,10 +29,7 @@ public class ScoreZone : MonoBehaviour
         {
             PlayerMovementController player = collision.gameObject.GetComponentInParent<PlayerMovementController>();
 
-            if (player.m_hasBounced)
-            {
-                Score(player.GetComponentInParent<PlayerGameComponent>());
-            }
+            Score(player.GetComponentInParent<PlayerGameComponent>());
         }
     }
 }
