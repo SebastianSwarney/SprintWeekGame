@@ -107,7 +107,7 @@ public class BumperController : MonoBehaviour
             forceRing.transform.localScale = originalForceRingSize;
             forceRing.gameObject.GetComponent<SpriteRenderer>().color = originalRingColor;
             ringAlphaChangeRate = 1.0f;
-            spriteRendererComponent.color = Color.white;
+            spriteRendererComponent.color = bumperColourA;
             bumperStates = BumperStates.Inactive;
         }
     }
