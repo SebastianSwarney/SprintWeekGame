@@ -36,6 +36,12 @@ public class PlayerMovementController : MonoBehaviour
     public float m_pushTime;
     public AnimationCurve m_pushCurve;
 
+    public float m_maxPushStunTime;
+    public float m_minPushStunTime;
+
+    public float m_maxPushStunShake;
+    public float m_minPushStunShake;
+
     public LerpScale m_pushVisual;
 
     private float m_pushBufferTimer;
@@ -74,6 +80,9 @@ public class PlayerMovementController : MonoBehaviour
 
     public float m_maxSpeed;
     private float m_currentSpeed;
+
+    [HideInInspector]
+    public bool m_hasBeenPushed;
 
     private void Start()
     {
@@ -318,13 +327,56 @@ public class PlayerMovementController : MonoBehaviour
 
         foreach (Collider2D collider in colliders)
         {
-            if (collider.gameObject != gameObject)
+            if (collider.gameObject.transform.parent.gameObject != gameObject)
             {
-                collider.GetComponentInParent<PlayerMovementController>().OnPlayerHit();
-                collider.GetComponentInParent<PlayerMovementController>().m_lastHitPlayer = m_gameComponent;
-                collider.GetComponentInParent<Rigidbody2D>().AddForce(-(transform.position - collider.transform.position) * p_pushForce, ForceMode2D.Impulse);
+                PlayerMovementController player = collider.GetComponentInParent<PlayerMovementController>();
+
+                if (!player.m_hasBeenPushed)
+                {
+                    player.OnPushHit((m_rigidbody.velocity.normalized), p_pushForce);
+                    //player.OnPushHit(-(transform.position - collider.transform.position), p_pushForce);
+                    player.m_lastHitPlayer = m_gameComponent;
+                }
             }
         }
+    }
+
+    public void OnPushHit(Vector3 p_hitDir, float p_pushAmount)
+    {
+        OnPlayerHit();
+
+        m_hasBeenPushed = true;
+
+        StartCoroutine(RunPushHitStun(p_hitDir, p_pushAmount));
+    }
+
+    private IEnumerator RunPushHitStun(Vector3 p_hitDir, float p_pushAmount)
+    {
+        float stunTime = Mathf.Lerp(m_minPushStunTime, m_maxPushStunTime, m_currentSpeed);
+
+        float effectAmount = Mathf.Lerp(m_minPushStunShake, m_maxPushStunShake, m_currentSpeed);
+
+        float t = 0;
+
+        m_movementControll = MovementControllState.MovementDisabled;
+
+        iTween.ShakePosition(gameObject, Vector3.one * effectAmount, stunTime);
+
+        while (t < stunTime)
+        {
+            m_rigidbody.velocity = Vector2.zero;
+            m_rigidbody.angularVelocity = 0f;
+
+            t += Time.deltaTime;
+
+            yield return null;
+        }
+
+        m_hasBeenPushed = false;
+
+        m_rigidbody.AddForce(p_hitDir * p_pushAmount, ForceMode2D.Impulse);
+
+        m_movementControll = MovementControllState.MovementEnabled;
     }
 
     public void OnPlayerHit()

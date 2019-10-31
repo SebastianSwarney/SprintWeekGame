@@ -100,10 +100,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   m_lastHitPlayer: {fileID: 0}
-  m_maxPushForce: 75
-  m_minPushForce: 25
+  m_maxPushForce: 150
+  m_minPushForce: 75
   m_maxPushRadius: 5
-  m_minPushRadius: 1
+  m_minPushRadius: 3
   m_pushBufferTime: 0.5
   m_pushTime: 0.3
   m_pushCurve:
@@ -130,6 +130,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_maxPushStunTime: 0.5
+  m_minPushStunTime: 0.01
+  m_maxPushStunShake: 2
+  m_minPushStunShake: 0.5
   m_pushVisual: {fileID: 5747651161528197761}
   m_crosshair: {fileID: 5747651161024233668}
   m_crosshairDistance: 2
@@ -141,6 +145,7 @@ MonoBehaviour:
     type: 3}
   m_rigidbody: {fileID: 0}
   m_maxSpeed: 30
+  m_hasBeenPushed: 0
 --- !u!114 &5747651160361464775
 MonoBehaviour:
   m_ObjectHideFlags: 0
