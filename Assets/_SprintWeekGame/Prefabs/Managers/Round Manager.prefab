@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 082a522027ffa8b4a8560b2e55d04995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_roundCountDownTime: 1
+  m_roundCountDownTime: 5
   m_playerLives: 5
   m_countdownText: {fileID: 586825694648099309}
   m_roundManagerEvent:

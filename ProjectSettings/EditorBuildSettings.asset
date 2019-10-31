@@ -24,7 +24,7 @@ EditorBuildSettings:
     path: Assets/_SprintWeekGame/Scenes/Levels/Level 3.unity
     guid: 16660a7d198687b468f41dbda155da0c
   - enabled: 1
-    path: Assets/_SprintWeekGame/Scenes/Levels/New Level 1.unity
+    path: Assets/_SprintWeekGame/Scenes/Levels/Level 2.unity
     guid: e365b629f49dc6b40bfe7436dcacbfdc
   - enabled: 1
     path: Assets/_SprintWeekGame/Scenes/Menu/Level Select.unity
