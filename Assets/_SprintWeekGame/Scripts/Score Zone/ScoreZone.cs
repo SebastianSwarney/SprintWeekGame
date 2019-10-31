@@ -6,6 +6,8 @@ public class ScoreZone : MonoBehaviour
 {
     public LayerMask m_playerMask;
 
+    public bool m_enter;
+
     public bool CheckCollisionLayer(LayerMask p_layerMask, GameObject p_object)
     {
         if (p_layerMask == (p_layerMask | (1 << p_object.layer)))
@@ -23,13 +25,39 @@ public class ScoreZone : MonoBehaviour
         PlayerManager.m_instance.ScorePlayer(p_scoredPlayer);
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (m_enter)
+        {
+            if (CheckCollisionLayer(m_playerMask, collision.gameObject))
+            {
+                PlayerMovementController player = collision.gameObject.GetComponentInParent<PlayerMovementController>();
+
+                PlayerGameComponent playerGamePiece = player.GetComponentInParent<PlayerGameComponent>();
+
+                if (!playerGamePiece.m_isDead)
+                {
+                    Score(player.GetComponentInParent<PlayerGameComponent>());
+                }
+            }
+        }
+    }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (CheckCollisionLayer(m_playerMask, collision.gameObject))
+        if (!m_enter)
         {
-            PlayerMovementController player = collision.gameObject.GetComponentInParent<PlayerMovementController>();
+            if (CheckCollisionLayer(m_playerMask, collision.gameObject))
+            {
+                PlayerMovementController player = collision.gameObject.GetComponentInParent<PlayerMovementController>();
 
-            Score(player.GetComponentInParent<PlayerGameComponent>());
+                PlayerGameComponent playerGamePiece = player.GetComponentInParent<PlayerGameComponent>();
+
+                if (!playerGamePiece.m_isDead)
+                {
+                    Score(player.GetComponentInParent<PlayerGameComponent>());
+                }
+            }
         }
     }
 }

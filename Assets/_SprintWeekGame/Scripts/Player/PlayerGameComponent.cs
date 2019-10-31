@@ -29,6 +29,9 @@ public class PlayerGameComponent : MonoBehaviour
     public float m_deathScaleAmount;
     public float m_deathShakeTime;
 
+    [HideInInspector]
+    public bool m_isDead;
+
     public void PlayerSetup()
     {
         m_scoreText = GetComponentInChildren<TextMeshProUGUI>();
@@ -40,6 +43,8 @@ public class PlayerGameComponent : MonoBehaviour
 
     public void KillPlayer()
     {
+        m_isDead = true;
+
         DecreaseLives();
 
         iTween.PunchScale(m_scoreShakeObject, Vector3.one * m_deathScaleAmount, m_deathShakeTime);
@@ -82,6 +87,8 @@ public class PlayerGameComponent : MonoBehaviour
         }
 
         m_movementController.Respawn();
+
+        m_isDead = false;
     }
 
     public void DecreaseLives()

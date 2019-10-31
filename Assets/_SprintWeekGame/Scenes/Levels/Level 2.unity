@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 136463271}
   - component: {fileID: 136463270}
   - component: {fileID: 136463273}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Safe Area
   m_TagString: SafeArea
   m_Icon: {fileID: 0}
@@ -347,6 +347,7 @@ MonoBehaviour:
   m_playerMask:
     serializedVersion: 2
     m_Bits: 2048
+  m_enter: 0
 --- !u!1 &141390641
 GameObject:
   m_ObjectHideFlags: 0
@@ -2033,7 +2034,8 @@ GameObject:
   - component: {fileID: 1659860832}
   - component: {fileID: 1659860831}
   - component: {fileID: 1659860833}
-  m_Layer: 0
+  - component: {fileID: 1659860834}
+  m_Layer: 10
   m_Name: Death Diamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2079,7 +2081,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a3c394a860b932646b353a71df24d8bc, type: 3}
-  m_Color: {r: 1, g: 0.4392157, b: 0.6509804, a: 1}
+  m_Color: {r: 0.4431373, g: 0.8117648, b: 0.6313726, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2136,6 +2138,22 @@ PolygonCollider2D:
       - {x: 2.56, y: -0.02}
       - {x: 2.56, y: 0.02}
       - {x: 0.02, y: 2.56}
+--- !u!114 &1659860834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659860830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1305656524f708542ac1baad9daae176, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_playerMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  m_enter: 1
 --- !u!1 &1696246235
 GameObject:
   m_ObjectHideFlags: 0
