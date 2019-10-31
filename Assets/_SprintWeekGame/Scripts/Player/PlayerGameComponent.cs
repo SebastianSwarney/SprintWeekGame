@@ -27,14 +27,14 @@ public class PlayerGameComponent : MonoBehaviour
         m_scoreText = GetComponentInChildren<Text>();
         m_movementController = GetComponent<PlayerMovementController>();
 
-        m_scoreText.gameObject.SetActive(false);
+        //m_scoreText.gameObject.SetActive(false);
 
         m_spawnPosition = transform.position;
     }
 
     private void OnGUI()
     {
-        m_scoreText.rectTransform.position = transform.position;
+        //m_scoreText.rectTransform.position = transform.position;
     }
 
     public void KillPlayer()
@@ -80,7 +80,7 @@ public class PlayerGameComponent : MonoBehaviour
             yield return null;
         }
 
-        m_scoreText.gameObject.SetActive(false);
+        //m_scoreText.gameObject.SetActive(false);
 
         m_movementController.Respawn();
     }
@@ -88,10 +88,14 @@ public class PlayerGameComponent : MonoBehaviour
     public void IncreaseScore()
     {
         m_currentScore++;
+
+        m_scoreText.text = m_currentScore.ToString();
     }
 
     public void DecreaseScore()
     {
         m_currentScore--;
+
+        m_scoreText.text = m_currentScore.ToString();
     }
 }

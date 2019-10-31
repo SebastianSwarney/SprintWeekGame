@@ -19,8 +19,14 @@ public class PlayerMovementController : MonoBehaviour
         public PlayerMovementEvent m_onLaunchChargeEvent;
         public PlayerMovementEvent m_onLaunchEvent;
 
+        [Header("Bounce Events")]
+        public PlayerMovementEvent m_onWallBounceEvent;
+
         [Header("Push Events")]
         public PlayerMovementEvent m_onPushEvent;
+
+        [Header("Player Death Event")]
+        public PlayerMovementEvent m_onPlayerDied;
     }
 
     public Events m_events;
@@ -448,6 +454,8 @@ public class PlayerMovementController : MonoBehaviour
     {
         m_isAiming = false;
 
+        m_events.m_onPlayerDied.Invoke();
+
         m_rigidbody.velocity = Vector2.zero;
         m_rigidbody.angularVelocity = 0f;
 
@@ -479,6 +487,8 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (CheckCollisionLayer(m_wallMask, collision.gameObject))
         {
+            m_events.m_onWallBounceEvent.Invoke();
+
             Instantiate(m_wallPartical, transform.position, Quaternion.identity);
         }
 
