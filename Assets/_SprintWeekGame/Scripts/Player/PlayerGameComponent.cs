@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerGameComponent : MonoBehaviour
 {
-    public int m_currentScore;
+    public int m_lives;
 
     public float m_respawnTime;
 
@@ -16,33 +17,25 @@ public class PlayerGameComponent : MonoBehaviour
     [HideInInspector]
     public PlayerMovementController m_movementController;
 
-    private Text m_scoreText;
+    private TextMeshProUGUI m_scoreText;
 
     public LerpColor m_mainSprite;
 
     public List<GameObject> m_componentsToHide;
 
-    private void Start()
+
+    public void PlayerSetup()
     {
-        m_scoreText = GetComponentInChildren<Text>();
+        m_scoreText = GetComponentInChildren<TextMeshProUGUI>();
         m_movementController = GetComponent<PlayerMovementController>();
-
-        //m_scoreText.gameObject.SetActive(false);
-
         m_spawnPosition = transform.position;
-    }
 
-    private void OnGUI()
-    {
-        //m_scoreText.rectTransform.position = transform.position;
+        m_scoreText.text = m_lives.ToString();
     }
 
     public void KillPlayer()
     {
-        if (m_movementController.m_lastHitPlayer != null)
-        {
-            m_movementController.m_lastHitPlayer.IncreaseScore();
-        }
+        DecreaseLives();
 
         m_movementController.KillPlayer();
 
@@ -80,22 +73,13 @@ public class PlayerGameComponent : MonoBehaviour
             yield return null;
         }
 
-        //m_scoreText.gameObject.SetActive(false);
-
         m_movementController.Respawn();
     }
 
-    public void IncreaseScore()
+    public void DecreaseLives()
     {
-        m_currentScore++;
+        m_lives--;
 
-        m_scoreText.text = m_currentScore.ToString();
-    }
-
-    public void DecreaseScore()
-    {
-        m_currentScore--;
-
-        m_scoreText.text = m_currentScore.ToString();
+        m_scoreText.text = m_lives.ToString();
     }
 }

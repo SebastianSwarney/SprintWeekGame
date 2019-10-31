@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using TMPro;
 
 [System.Serializable]
 public class RoundManagerEvent : UnityEvent { }
@@ -13,13 +14,15 @@ public class RoundManager : MonoBehaviour
 
     public int m_roundCountDownTime;
 
-    public int m_scoreToWin;
+    public int m_playerLives;
 
-    public Text m_countdownText;
+    public TextMeshProUGUI m_countdownText;
 
     public RoundManagerEvent m_roundManagerEvent;
 
     public float m_countdownPunchAmount;
+
+    private bool m_playersLeft;
 
     private void Awake()
     {
@@ -45,7 +48,6 @@ public class RoundManager : MonoBehaviour
 
     IEnumerator GameCountDown()
     {
-
         PlayerManager.m_instance.FreezeAllPlayers();
 
         int t = m_roundCountDownTime + 1;
@@ -55,9 +57,7 @@ public class RoundManager : MonoBehaviour
             t--;
 
             m_countdownText.text = t.ToString();
-
             m_roundManagerEvent.Invoke();
-
             iTween.PunchScale(m_countdownText.gameObject, Vector3.one * m_countdownPunchAmount, 0.8f);
 
             yield return new WaitForSeconds(1f);
@@ -68,15 +68,13 @@ public class RoundManager : MonoBehaviour
         PlayerManager.m_instance.UnFreezeAllPlayers();
     }
 
-    public void CheckScore()
+    public void CheckScore(int p_lastPlayer)
     {
-        for (int i = 0; i < PlayerManager.m_instance.m_players.Length; i++)
+        m_playersLeft = false;
+
+        if (PlayerManager.m_instance.m_onePlayerLeft)
         {
-            if (PlayerManager.m_instance.m_players[i].m_currentScore >= m_scoreToWin)
-            {
-                CameraController.m_instance.WinZoomToPlayer(i);
-            }
+            CameraController.m_instance.WinZoomToPlayer(p_lastPlayer);
         }
     }
-
 }

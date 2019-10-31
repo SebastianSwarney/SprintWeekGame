@@ -21,6 +21,17 @@ public class CameraController : MonoBehaviour
 
     public List<GameObject> m_gameWonHideObjects;
 
+    public AnimationCurve m_critZoomCurve;
+
+    public float m_critZoomAmount;
+
+    public float m_critZoomTime;
+    private float m_critZoomTimer;
+
+    public float m_cirtZoomOutTime;
+
+    private bool m_isCritZooming;
+
     private void Awake()
     {
         if (m_instance == null)
@@ -73,6 +84,67 @@ public class CameraController : MonoBehaviour
         }
 
         StartCoroutine(FadeOut());
+    }
+
+    public void RunCritCamera(Transform p_player)
+    {
+        /*
+        if (m_isCritZooming)
+        {
+            m_critZoomTimer = 0;
+            return;
+        }
+        */
+
+        if (!m_isCritZooming)
+        {
+            StartCoroutine(CritZoomCamera(p_player));
+        }
+    }
+
+    private IEnumerator CritZoomCamera(Transform p_player)
+    {
+        m_isCritZooming = true;
+
+        TimeManager.m_instance.RunCritSlowMo();
+
+        m_critZoomTimer = 0;
+
+        float m_startCameraSize = m_camera.orthographicSize;
+
+        Vector3 startPos = transform.position;
+
+        while (m_critZoomTimer < m_critZoomTime)
+        {
+            m_critZoomTimer += Time.deltaTime;
+
+            float progress = m_critZoomCurve.Evaluate(m_critZoomTimer / m_critZoomTime);
+
+            transform.position = Vector3.Lerp(startPos, p_player.position + Vector3.forward * -10, progress);
+
+            m_camera.orthographicSize = Mathf.Lerp(m_startCameraSize, m_critZoomAmount, progress);
+
+            yield return null;
+        }
+
+        float t = 0;
+
+        while (t < m_cirtZoomOutTime)
+        {
+            t += Time.deltaTime;
+
+            float progress = m_critZoomCurve.Evaluate(t / m_critZoomTime);
+
+            transform.position = Vector3.Lerp(p_player.position + Vector3.forward * -10, startPos, progress);
+
+            m_camera.orthographicSize = Mathf.Lerp(m_critZoomAmount, m_startCameraSize, progress);
+
+            yield return null;
+        }
+
+        transform.position = Vector3.zero + Vector3.forward * -10;
+
+        m_isCritZooming = false;
     }
 
     private IEnumerator FadeIn()

@@ -32,5 +32,16 @@ public class PlayerInput : MonoBehaviour
         {
             m_playerMovementController.OnLaunchInputDown();
         }
+
+        if (m_playerInputController.GetButtonDown("Slow Down"))
+        {
+            m_playerMovementController.OnSlowInputDown();
+        }
+
+        if (m_playerInputController.GetButtonUp("Slow Down"))
+        {
+            m_playerMovementController.OnSlowInputUp();
+        }
+
     }
 }

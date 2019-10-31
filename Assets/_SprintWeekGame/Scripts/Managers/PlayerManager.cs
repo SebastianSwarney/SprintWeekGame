@@ -8,6 +8,9 @@ public class PlayerManager : MonoBehaviour
 
     public PlayerGameComponent[] m_players;
 
+    [HideInInspector]
+    public bool m_onePlayerLeft;
+
     private void Awake()
     {
         if (m_instance == null)
@@ -23,6 +26,13 @@ public class PlayerManager : MonoBehaviour
     private void Start()
     {
         m_players = FindObjectsOfType<PlayerGameComponent>();
+
+        foreach (PlayerGameComponent player in m_players)
+        {
+            player.m_lives = RoundManager.m_instance.m_playerLives;
+
+            player.PlayerSetup();
+        }
     }
 
     public void FreezeAllPlayers()
@@ -45,9 +55,33 @@ public class PlayerManager : MonoBehaviour
     {
         p_playerToKill.KillPlayer();
 
-        RoundManager.m_instance.CheckScore();
+        if (p_playerToKill.m_lives > 0)
+        {
+            StartCoroutine(RespawnPlayer(p_playerToKill));
+        }
 
-        StartCoroutine(RespawnPlayer(p_playerToKill));
+        m_onePlayerLeft = true;
+
+        int index = 0;
+
+        int lastPlayer = 0;
+
+        for (int i = 0; i < m_players.Length; i++)
+        {
+            if (m_players[i].m_lives > 0)
+            {
+                index++;
+                lastPlayer = i;
+            }
+        }
+
+        if (index > 1)
+        {
+            m_onePlayerLeft = false;
+        }
+
+        RoundManager.m_instance.CheckScore(lastPlayer);
+
     }
 
     private IEnumerator RespawnPlayer(PlayerGameComponent p_respawningPlayer)
