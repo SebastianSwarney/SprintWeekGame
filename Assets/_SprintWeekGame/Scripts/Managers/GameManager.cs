@@ -23,6 +23,11 @@ public class GameManager : MonoBehaviour
 
     public void RoundWon()
     {
-        SceneManager.LoadScene("New Level");
+        SceneManager.LoadScene("Level Select");
+    }
+
+    public void LoadLevel(string m_levelToLoad)
+    {
+        SceneManager.LoadScene(m_levelToLoad);
     }
 }

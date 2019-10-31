@@ -55,6 +55,11 @@ public class CameraController : MonoBehaviour
         m_startCameraSize = m_camera.orthographicSize;
 
         StartCoroutine(FadeIn());
+
+        foreach (PlayerGameComponent item in PlayerManager.m_instance.m_players)
+        {
+            m_gameWonHideObjects.Add(item.GetComponentInChildren<Canvas>().gameObject);
+        }
     }
 
     public void WinZoomToPlayer(int p_playerId)
@@ -94,13 +99,6 @@ public class CameraController : MonoBehaviour
 
     public void RunCritCamera(Transform p_player)
     {
-        /*
-        if (m_isCritZooming)
-        {
-            m_critZoomTimer = 0;
-            return;
-        }
-        */
 
         if (!m_isCritZooming)
         {
