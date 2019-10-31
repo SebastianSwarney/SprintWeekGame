@@ -13,7 +13,8 @@ public class PlayerGameComponent : MonoBehaviour
 
     private Vector3 m_spawnPosition;
 
-    private PlayerMovementController m_movementController;
+    [HideInInspector]
+    public PlayerMovementController m_movementController;
 
     private Text m_scoreText;
 
@@ -38,7 +39,10 @@ public class PlayerGameComponent : MonoBehaviour
 
     public void KillPlayer()
     {
-        UpdateScore();
+        if (m_movementController.m_lastHitPlayer != null)
+        {
+            m_movementController.m_lastHitPlayer.IncreaseScore();
+        }
 
         m_movementController.KillPlayer();
 
@@ -55,7 +59,6 @@ public class PlayerGameComponent : MonoBehaviour
 
     private IEnumerator FadeIn()
     {
-
         m_movementController.m_rigidbody.velocity = Vector2.zero;
         m_movementController.m_rigidbody.angularVelocity = 0;
 
@@ -65,9 +68,6 @@ public class PlayerGameComponent : MonoBehaviour
         {
             item.SetActive(true);
         }
-
-        iTween.PunchScale(m_scoreText.gameObject, Vector3.one * 2, m_fadeInTime - 0.1f);
-
 
         float t = 0;
 
@@ -85,19 +85,13 @@ public class PlayerGameComponent : MonoBehaviour
         m_movementController.Respawn();
     }
 
-    public void UpdateScore()
+    public void IncreaseScore()
     {
-        
-        if (m_movementController.m_lastHitPlayer != null)
-        {
-            m_movementController.m_lastHitPlayer.m_currentScore++;
-        }
-        else
-        {
-            m_currentScore--;
-        }
+        m_currentScore++;
+    }
 
-        m_scoreText.text = m_currentScore.ToString();
-        
+    public void DecreaseScore()
+    {
+        m_currentScore--;
     }
 }

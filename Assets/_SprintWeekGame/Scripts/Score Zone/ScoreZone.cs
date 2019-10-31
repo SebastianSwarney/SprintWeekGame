@@ -23,7 +23,7 @@ public class ScoreZone : MonoBehaviour
         PlayerManager.m_instance.ScorePlayer(p_scoredPlayer);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         if (CheckCollisionLayer(m_playerMask, collision.gameObject))
         {

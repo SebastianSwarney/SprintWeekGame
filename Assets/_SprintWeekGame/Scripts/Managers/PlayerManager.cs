@@ -25,21 +25,33 @@ public class PlayerManager : MonoBehaviour
         m_players = FindObjectsOfType<PlayerGameComponent>();
     }
 
+    public void FreezeAllPlayers()
+    {
+        for (int i = 0; i < m_players.Length; i++)
+        {
+            m_players[i].m_movementController.m_movementControll = PlayerMovementController.MovementControllState.MovementDisabled;
+        }
+    }
+
+    public void UnFreezeAllPlayers()
+    {
+        for (int i = 0; i < m_players.Length; i++)
+        {
+            m_players[i].m_movementController.m_movementControll = PlayerMovementController.MovementControllState.MovementEnabled;
+        }
+    }
+
     public void ScorePlayer(PlayerGameComponent p_playerToKill)
     {
+        p_playerToKill.KillPlayer();
+
+        RoundManager.m_instance.CheckScore();
+
         StartCoroutine(RespawnPlayer(p_playerToKill));
     }
 
     private IEnumerator RespawnPlayer(PlayerGameComponent p_respawningPlayer)
     {
-        
-
-        iTween.ShakePosition(Camera.main.gameObject, Vector3.one, 1f);
-
-        p_respawningPlayer.KillPlayer();
-
-        RoundManager.m_instance.CheckScore();
-
         float t = 0;
 
         while (t < p_respawningPlayer.m_respawnTime)

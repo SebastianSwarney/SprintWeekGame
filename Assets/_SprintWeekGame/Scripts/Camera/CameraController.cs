@@ -7,6 +7,8 @@ public class CameraController : MonoBehaviour
     public float m_winZoomTime;
     public float m_cameraZoomAmount;
 
+    public AnimationCurve m_winZoomCurve;
+
     public static CameraController m_instance;
 
     private Camera m_camera;
@@ -32,12 +34,10 @@ public class CameraController : MonoBehaviour
     {
         PlayerGameComponent player = PlayerManager.m_instance.m_players[p_playerId];
 
-        iTween.MoveTo(gameObject, player.transform.position + Vector3.forward * -10, m_winZoomTime);
-
-        StartCoroutine(ZoomCamera());
+        StartCoroutine(ZoomCamera(player));
     }
 
-    private IEnumerator ZoomCamera()
+    private IEnumerator ZoomCamera(PlayerGameComponent p_player)
     {
         float t = 0;
 
@@ -46,11 +46,17 @@ public class CameraController : MonoBehaviour
         while (t < m_winZoomTime)
         {
             t += Time.deltaTime;
-            float progress = t / m_winZoomTime;
+
+
+            float progress = m_winZoomCurve.Evaluate(t / m_winZoomTime);
+
+            transform.position = Vector3.Lerp(transform.position, p_player.transform.position + Vector3.forward * -10, progress);
 
             m_camera.orthographicSize = Mathf.Lerp(m_startCameraSize, m_cameraZoomAmount, progress);
 
             yield return null;
         }
+
+        GameManager.m_instance.RoundWon();
     }
 }
