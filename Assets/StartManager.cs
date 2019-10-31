@@ -7,18 +7,9 @@ public class StartManager : MonoBehaviour
 {
     public string gameSceneName;
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    public void StartGame()
     {
-        if(Input.GetButtonDown("Fire1"))
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
-        }
+        SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
     }
 }
