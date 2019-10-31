@@ -708,7 +708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_roundCountDownTime: 1
-  m_scoreToWin: 3
+  m_scoreToWin: 5
   m_countdownText: {fileID: 1033751792}
   m_roundManagerEvent:
     m_PersistentCalls:
@@ -889,7 +889,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &190096361
 Transform:
   m_ObjectHideFlags: 0
@@ -1168,16 +1168,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5747651160361464778, guid: 831665dd373801743aa115b76f20dfae,
-        type: 3}
-      propertyPath: m_maxPushRadius
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5747651160361464778, guid: 831665dd373801743aa115b76f20dfae,
-        type: 3}
-      propertyPath: m_minPushRadius
-      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 831665dd373801743aa115b76f20dfae, type: 3}

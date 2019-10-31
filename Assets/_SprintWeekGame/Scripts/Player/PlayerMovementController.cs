@@ -1,22 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+[System.Serializable]
+public class PlayerMovementEvent : UnityEvent { }
 
 public class PlayerMovementController : MonoBehaviour
 {
     public enum MovementControllState {MovementEnabled, MovementDisabled}
     public MovementControllState m_movementControll;
 
+    #region Events
+    [System.Serializable]
+    public struct Events
+    {
+        [Header("Movement Events")]
+        public PlayerMovementEvent m_onLaunchChargeEvent;
+        public PlayerMovementEvent m_onLaunchEvent;
+
+        [Header("Push Events")]
+        public PlayerMovementEvent m_onPushEvent;
+    }
+
+    public Events m_events;
+    #endregion
+
+    #region Movement Properties
     [Header("Movement Properties")]
     public float m_maxLaunchForce;
     public float m_minLaunchForce;
     public AnimationCurve m_chargeUpCurve;
     public float m_speedChargeUpTime;
     public float m_chargeVisualDistance;
-
+    
     private float m_speedChargeUpTimer;
     [Space]
+    #endregion
 
+    #region Bounce Properties
     [Header("Bounce Properties")]
     public LayerMask m_playerMask;
     public LayerMask m_wallMask;
@@ -24,7 +46,9 @@ public class PlayerMovementController : MonoBehaviour
     [HideInInspector]
     public PlayerGameComponent m_lastHitPlayer;
     [Space]
+    #endregion
 
+    #region Push Properties
     [Header("Push Properties")]
     public float m_maxPushForce;
     public float m_minPushForce;
@@ -47,9 +71,10 @@ public class PlayerMovementController : MonoBehaviour
     private float m_pushBufferTimer;
     private Coroutine m_pushBufferCorutine;
     private LerpColor m_pushVisualLerp;
-
     [Space]
+    #endregion
 
+    #region Aim Properties
     [Header("Aim Properties")]
     public Transform m_crosshair;
     public float m_crosshairDistance;
@@ -62,40 +87,34 @@ public class PlayerMovementController : MonoBehaviour
     private Vector2 m_aimInput;
     private bool m_isAiming;
     [Space]
+    #endregion
 
-
-
+    #region Visual Properties
     [Header("Visual Properties")]
     public GameObject m_wallPartical;
     public GameObject m_hitPlayerEffect;
 
     private LineRenderer m_targetLine;
     [Space]
-
-
-    [HideInInspector]
-    public Rigidbody2D m_rigidbody;
-
-    private PlayerGameComponent m_gameComponent;
+    #endregion
 
     public float m_maxSpeed;
     private float m_currentSpeed;
 
+    [HideInInspector]
+    public Rigidbody2D m_rigidbody;
+    private PlayerGameComponent m_gameComponent;
     [HideInInspector]
     public bool m_hasBeenPushed;
 
     private void Start()
     {
         m_gameComponent = GetComponent<PlayerGameComponent>();
-
         m_rigidbody = GetComponent<Rigidbody2D>();
-
         m_targetLine = GetComponent<LineRenderer>();
-
         m_pushVisualLerp = m_pushVisual.GetComponent<LerpColor>();
 
         m_targetLine.enabled = false;
-
         m_pushBufferCorutine = StartCoroutine(RunBufferTimer((x) => m_pushBufferTimer = (x), m_pushBufferTime));
     }
 
@@ -130,6 +149,7 @@ public class PlayerMovementController : MonoBehaviour
         CalculateSpeed();
     }
 
+    #region Input Code
     public void SetAimInput(Vector2 p_input)
     {
         m_aimInput = p_input;
@@ -176,6 +196,7 @@ public class PlayerMovementController : MonoBehaviour
             m_crosshair.position = transform.position + m_lastPos;
         }
     }
+    #endregion
 
     #region Input Buffering Code
 
@@ -228,6 +249,7 @@ public class PlayerMovementController : MonoBehaviour
 
     #endregion
 
+    #region Basic Movement Code
     private void CalculateSpeed()
     {
         m_currentSpeed = m_rigidbody.velocity.magnitude / m_maxSpeed;
@@ -235,6 +257,8 @@ public class PlayerMovementController : MonoBehaviour
 
     private IEnumerator ChargeMove()
     {
+        m_events.m_onLaunchChargeEvent.Invoke();
+
         m_targetLine.enabled = true;
 
         float t = 0;
@@ -285,19 +309,27 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Launch(float p_launchForce, Vector2 p_direction)
     {
+        m_events.m_onLaunchEvent.Invoke();
+
         m_rigidbody.velocity = Vector2.zero;
         m_rigidbody.angularVelocity = 0f;
         m_rigidbody.AddForce(p_direction * p_launchForce, ForceMode2D.Impulse);
     }
+    #endregion
 
+    #region Push Code
     private IEnumerator RunPush()
     {
+        m_events.m_onPushEvent.Invoke();
+
         float pushRadius = Mathf.Lerp(m_minPushRadius, m_maxPushRadius, m_currentSpeed);
         float pushForce = Mathf.Lerp(m_minPushForce, m_maxPushForce, m_currentSpeed);
 
         m_pushVisualLerp.ResetColor();
 
         float t = 0;
+
+        List<PlayerMovementController> hitPlayers = new List<PlayerMovementController>();
 
         while (t < m_pushTime)
         {
@@ -307,11 +339,39 @@ public class PlayerMovementController : MonoBehaviour
 
             float currentRaidus = Mathf.Lerp(0, pushRadius, progress);
 
-            Push(currentRaidus, pushForce);
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, currentRaidus, m_playerMask);
+
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.gameObject.transform.parent.gameObject != gameObject)
+                {
+                    PlayerMovementController player = collider.GetComponentInParent<PlayerMovementController>();
+
+                    if (!hitPlayers.Contains(player))
+                    {
+                        hitPlayers.Add(player);
+
+                        if (!player.m_hasBeenPushed)
+                        {
+                            //player.OnPushHit((m_rigidbody.velocity.normalized), p_pushForce);
+                            player.OnPushHit(-(transform.position - collider.transform.position), pushForce);
+                            player.m_lastHitPlayer = m_gameComponent;
+                        }
+                    }
+                }
+            }
+
+
+            //Push(currentRaidus, pushForce);
             
             m_pushVisual.SetScaleRadius(currentRaidus);
 
             yield return null;
+        }
+
+        foreach (PlayerMovementController player in hitPlayers)
+        {
+            player.m_hasBeenPushed = false;
         }
 
         m_pushVisualLerp.FindFadeProgress(1);
@@ -333,8 +393,8 @@ public class PlayerMovementController : MonoBehaviour
 
                 if (!player.m_hasBeenPushed)
                 {
-                    player.OnPushHit((m_rigidbody.velocity.normalized), p_pushForce);
-                    //player.OnPushHit(-(transform.position - collider.transform.position), p_pushForce);
+                    //player.OnPushHit((m_rigidbody.velocity.normalized), p_pushForce);
+                    player.OnPushHit(-(transform.position - collider.transform.position), p_pushForce);
                     player.m_lastHitPlayer = m_gameComponent;
                 }
             }
@@ -372,13 +432,13 @@ public class PlayerMovementController : MonoBehaviour
             yield return null;
         }
 
-        m_hasBeenPushed = false;
-
         m_rigidbody.AddForce(p_hitDir * p_pushAmount, ForceMode2D.Impulse);
 
         m_movementControll = MovementControllState.MovementEnabled;
     }
+    #endregion
 
+    #region Score and Hit Code
     public void OnPlayerHit()
     {
         m_aimSlowDownTimer = 0;
@@ -433,4 +493,5 @@ public class PlayerMovementController : MonoBehaviour
             m_aimSlowDownTimer = 0;
         }
     }
+    #endregion
 }

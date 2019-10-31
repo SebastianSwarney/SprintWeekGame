@@ -65,6 +65,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_movementControll: 1
+  m_events:
+    m_onLaunchChargeEvent:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: PlayerMovementEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    m_onLaunchEvent:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: PlayerMovementEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    m_onPushEvent:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: PlayerMovementEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
   m_maxLaunchForce: 150
   m_minLaunchForce: 50
   m_chargeUpCurve:
@@ -105,7 +121,7 @@ MonoBehaviour:
   m_maxPushRadius: 5
   m_minPushRadius: 3
   m_pushBufferTime: 0.5
-  m_pushTime: 0.3
+  m_pushTime: 0.5
   m_pushCurve:
     serializedVersion: 2
     m_Curve:
@@ -130,10 +146,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_maxPushStunTime: 0.5
-  m_minPushStunTime: 0.01
-  m_maxPushStunShake: 2
-  m_minPushStunShake: 0.5
+  m_maxPushStunTime: 1
+  m_minPushStunTime: 0.1
+  m_maxPushStunShake: 1
+  m_minPushStunShake: 0.1
   m_pushVisual: {fileID: 5747651161528197761}
   m_crosshair: {fileID: 5747651161024233668}
   m_crosshairDistance: 2
@@ -143,8 +159,8 @@ MonoBehaviour:
     type: 3}
   m_hitPlayerEffect: {fileID: 7903954785553478641, guid: 539c9939251454441883370920847c79,
     type: 3}
-  m_rigidbody: {fileID: 0}
   m_maxSpeed: 30
+  m_rigidbody: {fileID: 0}
   m_hasBeenPushed: 0
 --- !u!114 &5747651160361464775
 MonoBehaviour:
@@ -504,7 +520,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: -1
   m_TargetDisplay: 0
 --- !u!114 &5747651161251826089
 MonoBehaviour:
