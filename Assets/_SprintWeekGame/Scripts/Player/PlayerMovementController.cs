@@ -331,8 +331,8 @@ public class PlayerMovementController : MonoBehaviour
     {
         m_events.m_onLaunchEvent.Invoke();
 
-        m_rigidbody.velocity = Vector2.zero;
-        m_rigidbody.angularVelocity = 0f;
+        //m_rigidbody.velocity = Vector2.zero;
+        //m_rigidbody.angularVelocity = 0f;
         m_rigidbody.AddForce(p_direction * p_launchForce, ForceMode2D.Impulse);
     }
 
@@ -346,7 +346,7 @@ public class PlayerMovementController : MonoBehaviour
 
             float progress = m_chargeUpCurve.Evaluate(m_aimSlowDownTimer / m_aimSlowDownTime);
 
-            float aimSlowDownSpeed = Mathf.Lerp(0, m_aimSlowDownSpeed, progress);
+            float aimSlowDownSpeed = Mathf.Lerp(0, m_aimSlowDownSpeed * 3, progress);
 
             m_rigidbody.AddForce(-m_rigidbody.velocity * aimSlowDownSpeed, ForceMode2D.Force);
 

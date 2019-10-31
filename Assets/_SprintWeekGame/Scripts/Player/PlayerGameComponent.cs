@@ -23,6 +23,11 @@ public class PlayerGameComponent : MonoBehaviour
 
     public List<GameObject> m_componentsToHide;
 
+    public GameObject m_scoreShakeObject;
+
+    public float m_deathShakeAmount;
+    public float m_deathScaleAmount;
+    public float m_deathShakeTime;
 
     public void PlayerSetup()
     {
@@ -36,6 +41,9 @@ public class PlayerGameComponent : MonoBehaviour
     public void KillPlayer()
     {
         DecreaseLives();
+
+        iTween.PunchScale(m_scoreShakeObject, Vector3.one * m_deathScaleAmount, m_deathShakeTime);
+        iTween.PunchRotation(m_scoreShakeObject, Vector3.one * m_deathShakeAmount, m_deathShakeTime);
 
         m_movementController.KillPlayer();
 

@@ -9,7 +9,7 @@ public class CameraFade : MonoBehaviour
 
     private Color m_startColor;
 
-    private void Start()
+    private void Awake()
     {
         m_uiImage = GetComponent<Image>();
         m_startColor = Color.black;

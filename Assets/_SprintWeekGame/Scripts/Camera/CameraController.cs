@@ -32,6 +32,8 @@ public class CameraController : MonoBehaviour
 
     private bool m_isCritZooming;
 
+    private float m_startCameraSize;
+
     private void Awake()
     {
         if (m_instance == null)
@@ -46,7 +48,11 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
+        
+
         m_camera = GetComponent<Camera>();
+
+        m_startCameraSize = m_camera.orthographicSize;
 
         StartCoroutine(FadeIn());
     }
@@ -104,13 +110,13 @@ public class CameraController : MonoBehaviour
 
     private IEnumerator CritZoomCamera(Transform p_player)
     {
+        transform.position = Vector3.zero + Vector3.forward * -10;
+
         m_isCritZooming = true;
 
         TimeManager.m_instance.RunCritSlowMo();
 
         m_critZoomTimer = 0;
-
-        float m_startCameraSize = m_camera.orthographicSize;
 
         Vector3 startPos = transform.position;
 
@@ -141,6 +147,8 @@ public class CameraController : MonoBehaviour
 
             yield return null;
         }
+
+        m_camera.orthographicSize = m_startCameraSize;
 
         transform.position = Vector3.zero + Vector3.forward * -10;
 

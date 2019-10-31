@@ -527,7 +527,7 @@ GameObject:
   - component: {fileID: 5747651160361464779}
   - component: {fileID: 5747651160361464774}
   m_Layer: 11
-  m_Name: Player
+  m_Name: Player Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -717,6 +717,10 @@ MonoBehaviour:
   m_componentsToHide:
   - {fileID: 5747651160436042537}
   - {fileID: 5747651161024233669}
+  m_scoreShakeObject: {fileID: 3984321602325914270}
+  m_deathShakeAmount: 10
+  m_deathScaleAmount: 2
+  m_deathShakeTime: 1
 --- !u!50 &5747651160361464779
 Rigidbody2D:
   serializedVersion: 4
