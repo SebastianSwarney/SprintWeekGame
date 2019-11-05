@@ -25,6 +25,10 @@ public class PlayerMovementController : MonoBehaviour
         [Header("Push Events")]
         public PlayerMovementEvent m_onPushEvent;
 
+        [Header("Drift Events")]
+        public PlayerMovementEvent m_onDriftBeginEvent;
+        public PlayerMovementEvent m_onDriftEndEvent;
+
         [Header("Player Death Event")]
         public PlayerMovementEvent m_onPlayerDied;
     }
@@ -45,11 +49,14 @@ public class PlayerMovementController : MonoBehaviour
     public float m_driftSpeed;
     public float m_maxBreakSlowTime;
     public float m_minBreakSlowTime;
+    public float m_breakBufferTime;
 
+    private float m_breakBufferTimer;
     private float m_breakSlowTimer;
 
     private float m_speedChargeUpTimer;
     private Vector2 m_moveInput;
+    private Coroutine m_breakBufferCoroutine;
     [Space]
     #endregion
 
@@ -110,6 +117,7 @@ public class PlayerMovementController : MonoBehaviour
     [Header("Visual Properties")]
     public GameObject m_wallPartical;
     public GameObject m_hitPlayerEffect;
+    public GameObject m_playerDeathEffect;
 
     private LineRenderer m_targetLine;
     [Space]
@@ -135,6 +143,8 @@ public class PlayerMovementController : MonoBehaviour
 
         m_targetLine.enabled = false;
         m_pushBufferCorutine = StartCoroutine(RunBufferTimer((x) => m_pushBufferTimer = (x), m_pushBufferTime));
+
+        m_breakBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_breakBufferTimer = (x), m_breakBufferTime));
     }
 
     private void Update()
@@ -204,7 +214,11 @@ public class PlayerMovementController : MonoBehaviour
     public void OnSlowInputDown()
     {
         m_isSlowingDown = true;
-        StartCoroutine(SlowDown());
+
+        if (CheckOverBuffer(ref m_breakBufferTimer, ref m_breakBufferTime, m_breakBufferCoroutine))
+        {
+            StartCoroutine(SlowDown());
+        }
     }
 
     public void OnSlowInputUp()
@@ -292,6 +306,8 @@ public class PlayerMovementController : MonoBehaviour
 
     private IEnumerator ChargeMove()
     {
+        m_crosshair.gameObject.SetActive(true);
+
         m_events.m_onLaunchChargeEvent.Invoke();
 
         m_targetLine.enabled = true;
@@ -339,6 +355,8 @@ public class PlayerMovementController : MonoBehaviour
         m_targetLine.enabled = false;
 
         Launch(currentLaunchForce, m_lastAim);
+
+        m_crosshair.gameObject.SetActive(false);
     }
 
     private void Launch(float p_launchForce, Vector2 p_direction)
@@ -357,6 +375,8 @@ public class PlayerMovementController : MonoBehaviour
 
         float m_currentBreakTime = Mathf.Lerp(m_minBreakSlowTime, m_maxBreakSlowTime, m_currentSpeed);
 
+        m_events.m_onDriftBeginEvent.Invoke();
+
         while (m_isSlowingDown)
         {
             m_breakSlowTimer += Time.deltaTime;
@@ -371,8 +391,15 @@ public class PlayerMovementController : MonoBehaviour
 
             m_rigidbody.AddForce(m_moveInput * driftSpeed * 30, ForceMode2D.Force);
 
+            if (m_breakSlowTimer > m_currentBreakTime)
+            {
+                m_events.m_onDriftEndEvent.Invoke();
+            }
+
             yield return null;
         }
+
+        m_events.m_onDriftEndEvent.Invoke();
     }
     #endregion
 
@@ -488,6 +515,12 @@ public class PlayerMovementController : MonoBehaviour
 
     public void KillPlayer()
     {
+        Vector2 dir = Vector3.zero - transform.position;
+
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        Quaternion spawnRot = Quaternion.AngleAxis(angle, Vector3.forward);
+        Instantiate(m_playerDeathEffect, transform.position, spawnRot);
+
         m_isAiming = false;
 
         m_events.m_onPlayerDied.Invoke();
@@ -499,11 +532,14 @@ public class PlayerMovementController : MonoBehaviour
 
         m_movementControll = MovementControllState.MovementDisabled;
 
+        m_crosshair.gameObject.SetActive(false);
+
     }
 
     public void Respawn()
     {
         m_rigidbody.simulated = true;
+        m_crosshair.gameObject.SetActive(false);
         m_movementControll = MovementControllState.MovementEnabled;
     }
 
