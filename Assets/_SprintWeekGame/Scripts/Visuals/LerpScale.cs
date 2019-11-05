@@ -60,6 +60,11 @@ public class LerpScale : MonoBehaviour
         transform.localScale = Vector3.Lerp(m_startScale, m_targetScale, p_progress);
     }
 
+    public void FindReverseLerpProgress(float p_progress)
+    {
+        transform.localScale = Vector3.Lerp(m_targetScale, m_startScale, p_progress);
+    }
+
     public void FindLerpProgressSet(float p_progress, float p_targetScale)
     {
         Vector3 targetScale = new Vector3(p_targetScale, p_targetScale, p_targetScale);

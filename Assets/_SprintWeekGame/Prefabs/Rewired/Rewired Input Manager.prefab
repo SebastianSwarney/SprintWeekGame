@@ -323,7 +323,7 @@ MonoBehaviour:
       _categoryId: 0
     - _id: 4
       _name: UISubmit
-      _type: 1
+      _type: 0
       _descriptiveName: UISubmit
       _positiveDescriptiveName: 
       _negativeDescriptiveName: 
@@ -332,7 +332,7 @@ MonoBehaviour:
       _categoryId: 1
     - _id: 5
       _name: UIHorizontal
-      _type: 1
+      _type: 0
       _descriptiveName: Action0
       _positiveDescriptiveName: 
       _negativeDescriptiveName: 

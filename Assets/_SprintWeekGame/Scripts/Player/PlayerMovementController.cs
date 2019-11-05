@@ -133,6 +133,7 @@ public class PlayerMovementController : MonoBehaviour
     public bool m_hasBeenPushed;
 
     private bool m_isSlowingDown;
+    private bool m_resetAfterLaunch;
 
     private void Start()
     {
@@ -213,11 +214,15 @@ public class PlayerMovementController : MonoBehaviour
 
     public void OnSlowInputDown()
     {
-        m_isSlowingDown = true;
-
-        if (CheckOverBuffer(ref m_breakBufferTimer, ref m_breakBufferTime, m_breakBufferCoroutine))
+        if (m_movementControll == MovementControllState.MovementEnabled)
         {
-            StartCoroutine(SlowDown());
+            m_isSlowingDown = true;
+
+            if (CheckOverBuffer(ref m_breakBufferTimer, ref m_breakBufferTime, m_breakBufferCoroutine) || m_resetAfterLaunch)
+            {
+                StartCoroutine(SlowDown());
+                m_resetAfterLaunch = false;
+            }
         }
     }
 
@@ -318,8 +323,6 @@ public class PlayerMovementController : MonoBehaviour
 
         LerpScale arrowLerp = m_crosshair.GetComponent<LerpScale>();
 
-        Vector2 startVelocity = m_rigidbody.velocity;
-
         m_aimSlowDownTimer = 0;
 
         while (m_isAiming)
@@ -356,15 +359,14 @@ public class PlayerMovementController : MonoBehaviour
 
         Launch(currentLaunchForce, m_lastAim);
 
+        m_resetAfterLaunch = true;
+
         m_crosshair.gameObject.SetActive(false);
     }
 
     private void Launch(float p_launchForce, Vector2 p_direction)
     {
         m_events.m_onLaunchEvent.Invoke();
-
-        //m_rigidbody.velocity = Vector2.zero;
-        //m_rigidbody.angularVelocity = 0f;
 
         m_rigidbody.AddForce(p_direction * p_launchForce, ForceMode2D.Impulse);
     }
@@ -398,6 +400,8 @@ public class PlayerMovementController : MonoBehaviour
 
             yield return null;
         }
+
+        m_breakBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_breakBufferTimer = (x), m_breakBufferTime));
 
         m_events.m_onDriftEndEvent.Invoke();
     }
@@ -510,7 +514,7 @@ public class PlayerMovementController : MonoBehaviour
     public void OnPlayerHit()
     {
         m_aimSlowDownTimer = 0;
-        m_breakSlowTimer = 0;
+        //m_breakSlowTimer = 0;
     }
 
     public void KillPlayer()

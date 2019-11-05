@@ -789,7 +789,7 @@ MonoBehaviour:
   m_driftSpeed: 40
   m_maxBreakSlowTime: 1
   m_minBreakSlowTime: 0.1
-  m_breakBufferTime: 1
+  m_breakBufferTime: 0.5
   m_playerMask:
     serializedVersion: 2
     m_Bits: 2048
@@ -1881,11 +1881,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5747651160436042536}
     m_Modifications:
-    - target: {fileID: 7903954785553478641, guid: 5868c7759b91b27479c0b8e2013171ce,
-        type: 3}
-      propertyPath: m_Name
-      value: Drift
-      objectReference: {fileID: 0}
     - target: {fileID: 7903954785553478644, guid: 5868c7759b91b27479c0b8e2013171ce,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1940,6 +1935,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7903954785553478641, guid: 5868c7759b91b27479c0b8e2013171ce,
+        type: 3}
+      propertyPath: m_Name
+      value: Drift
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5868c7759b91b27479c0b8e2013171ce, type: 3}
