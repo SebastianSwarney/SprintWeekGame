@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LerpColor : MonoBehaviour
 {
+    public Color32 m_endColor;
+
     private SpriteRenderer m_spriteRenderer;
 
     private Color m_startColor;
@@ -31,8 +33,15 @@ public class LerpColor : MonoBehaviour
         m_spriteRenderer.color = m_startColor;
     }
 
+    public void FindColorLerpProgress(float p_progress)
+    {
+        m_spriteRenderer.color = Color.Lerp(m_startColor, m_endColor, p_progress);
+    }
+
     public void FindColorLerpProgress(Color p_startColor, Color p_endColor, float p_progress)
     {
         m_spriteRenderer.color = Color.Lerp(p_startColor, p_endColor, p_progress);
     }
+
+
 }

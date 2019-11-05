@@ -65,7 +65,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
@@ -718,6 +718,34 @@ MonoBehaviour:
     m_RotationOrder: 4
   m_speedChargeUpTime: 1
   m_chargeVisualDistance: 5
+  m_slowDownCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_breakSlowSpeed: 30
+  m_driftSpeed: 40
+  m_maxBreakSlowTime: 1
+  m_minBreakSlowTime: 0.1
   m_playerMask:
     serializedVersion: 2
     m_Bits: 2048
@@ -858,7 +886,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -879,7 +907,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 1, g: 0.43921572, b: 0.6509804, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -909,7 +937,7 @@ LineRenderer:
     numCornerVertices: 0
     numCapVertices: 90
     alignment: 1
-    textureMode: 0
+    textureMode: 1
     shadowBias: 0.5
     generateLightingData: 0
   m_UseWorldSpace: 1
@@ -1191,6 +1219,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1962c89fe3feb424da0daf1dd2b16cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_endColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!1 &5747651161442071858
 GameObject:
   m_ObjectHideFlags: 0
@@ -1369,6 +1400,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1962c89fe3feb424da0daf1dd2b16cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_endColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!1 &5747651161589540064
 GameObject:
   m_ObjectHideFlags: 0
@@ -1379,6 +1413,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5747651161589540067}
   - component: {fileID: 5747651161589540066}
+  - component: {fileID: 2044586105594983489}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -1449,6 +1484,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2044586105594983489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5747651161589540064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1962c89fe3feb424da0daf1dd2b16cdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_endColor:
+    serializedVersion: 2
+    rgba: 4288900606
 --- !u!1 &5901118557508740779
 GameObject:
   m_ObjectHideFlags: 0
@@ -1710,11 +1760,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5747651160436042536}
     m_Modifications:
-    - target: {fileID: 4695112769004714844, guid: 90e901bd2d9cd2e40862f22d39d66f5f,
-        type: 3}
-      propertyPath: m_Name
-      value: Player Trail
-      objectReference: {fileID: 0}
     - target: {fileID: 4695112769004714847, guid: 90e901bd2d9cd2e40862f22d39d66f5f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1769,6 +1814,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4695112769004714844, guid: 90e901bd2d9cd2e40862f22d39d66f5f,
+        type: 3}
+      propertyPath: m_Name
+      value: Player Trail
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90e901bd2d9cd2e40862f22d39d66f5f, type: 3}

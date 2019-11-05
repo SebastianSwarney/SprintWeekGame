@@ -39,8 +39,17 @@ public class PlayerMovementController : MonoBehaviour
     public AnimationCurve m_chargeUpCurve;
     public float m_speedChargeUpTime;
     public float m_chargeVisualDistance;
-    
+
+    public AnimationCurve m_slowDownCurve;
+    public float m_breakSlowSpeed;
+    public float m_driftSpeed;
+    public float m_maxBreakSlowTime;
+    public float m_minBreakSlowTime;
+
+    private float m_breakSlowTimer;
+
     private float m_speedChargeUpTimer;
+    private Vector2 m_moveInput;
     [Space]
     #endregion
 
@@ -163,6 +172,11 @@ public class PlayerMovementController : MonoBehaviour
     public void SetAimInput(Vector2 p_input)
     {
         m_aimInput = p_input;
+    }
+
+    public void SetMoveInput(Vector2 p_input)
+    {
+        m_moveInput = p_input;
     }
 
     public void OnLaunchInputDown()
@@ -333,22 +347,29 @@ public class PlayerMovementController : MonoBehaviour
 
         //m_rigidbody.velocity = Vector2.zero;
         //m_rigidbody.angularVelocity = 0f;
+
         m_rigidbody.AddForce(p_direction * p_launchForce, ForceMode2D.Impulse);
     }
 
     private IEnumerator SlowDown()
     {
-        m_aimSlowDownTimer = 0;
+        m_breakSlowTimer = 0;
+
+        float m_currentBreakTime = Mathf.Lerp(m_minBreakSlowTime, m_maxBreakSlowTime, m_currentSpeed);
 
         while (m_isSlowingDown)
         {
-            m_aimSlowDownTimer += Time.deltaTime;
+            m_breakSlowTimer += Time.deltaTime;
 
-            float progress = m_chargeUpCurve.Evaluate(m_aimSlowDownTimer / m_aimSlowDownTime);
+            float progress = m_slowDownCurve.Evaluate(m_breakSlowTimer / m_currentBreakTime);
 
-            float aimSlowDownSpeed = Mathf.Lerp(0, m_aimSlowDownSpeed * 3, progress);
+            float driftSpeed = Mathf.Lerp(m_breakSlowSpeed, 0, progress);
 
-            m_rigidbody.AddForce(-m_rigidbody.velocity * aimSlowDownSpeed, ForceMode2D.Force);
+            float breakSpeed = Mathf.Lerp(0, m_breakSlowSpeed, progress);
+
+            m_rigidbody.AddForce(-m_rigidbody.velocity * breakSpeed, ForceMode2D.Force);
+
+            m_rigidbody.AddForce(m_moveInput * driftSpeed * 30, ForceMode2D.Force);
 
             yield return null;
         }
@@ -462,6 +483,7 @@ public class PlayerMovementController : MonoBehaviour
     public void OnPlayerHit()
     {
         m_aimSlowDownTimer = 0;
+        m_breakSlowTimer = 0;
     }
 
     public void KillPlayer()
@@ -514,7 +536,7 @@ public class PlayerMovementController : MonoBehaviour
             m_lastHitPlayer = player.gameObject.GetComponent<PlayerGameComponent>();
             player.m_lastHitPlayer = m_gameComponent;
 
-            m_aimSlowDownTimer = 0;
+            OnPlayerHit();
         }
     }
     #endregion

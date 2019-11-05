@@ -77,40 +77,20 @@ PrefabInstance:
       propertyPath: m_playerId
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 5747651161419176183, guid: 831665dd373801743aa115b76f20dfae,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 0.8666667
-      objectReference: {fileID: 0}
-    - target: {fileID: 5747651161419176183, guid: 831665dd373801743aa115b76f20dfae,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 0.15294118
-      objectReference: {fileID: 0}
-    - target: {fileID: 5747651161419176183, guid: 831665dd373801743aa115b76f20dfae,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 0.8784314
-      objectReference: {fileID: 0}
-    - target: {fileID: 5747651161242164732, guid: 831665dd373801743aa115b76f20dfae,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -364
-      objectReference: {fileID: 0}
-    - target: {fileID: 1680660939927249338, guid: 831665dd373801743aa115b76f20dfae,
+    - target: {fileID: 5747651160361464774, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
       propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0.87843144
+      value: 0.8745099
       objectReference: {fileID: 0}
-    - target: {fileID: 1680660939927249338, guid: 831665dd373801743aa115b76f20dfae,
+    - target: {fileID: 5747651160361464774, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
       propertyPath: m_Parameters.colorGradient.key0.g
-      value: 0.86666673
+      value: 0.8470589
       objectReference: {fileID: 0}
-    - target: {fileID: 1680660939927249338, guid: 831665dd373801743aa115b76f20dfae,
+    - target: {fileID: 5747651160361464774, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
       propertyPath: m_Parameters.colorGradient.key0.b
-      value: 0.15294118
+      value: 0.14509805
       objectReference: {fileID: 0}
     - target: {fileID: 4793260680330966261, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
@@ -130,6 +110,41 @@ PrefabInstance:
     - target: {fileID: 4206580367694709739, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
       propertyPath: m_Color.b
+      value: 0.15294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 8122892143088030734, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -400
+      objectReference: {fileID: 0}
+    - target: {fileID: 5747651161419176183, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.8666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 5747651161419176183, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.15294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 5747651161419176183, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.8784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 1680660939927249338, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.r
+      value: 0.87843144
+      objectReference: {fileID: 0}
+    - target: {fileID: 1680660939927249338, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.g
+      value: 0.86666673
+      objectReference: {fileID: 0}
+    - target: {fileID: 1680660939927249338, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.b
       value: 0.15294118
       objectReference: {fileID: 0}
     - target: {fileID: 1475642687717803547, guid: 831665dd373801743aa115b76f20dfae,
@@ -157,10 +172,10 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8122892143088030734, guid: 831665dd373801743aa115b76f20dfae,
+    - target: {fileID: 5747651161242164732, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -400
+      value: -364
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 831665dd373801743aa115b76f20dfae, type: 3}

@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 5747651160361464776, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
       propertyPath: m_Name
-      value: Player (1)
+      value: Player Pink
       objectReference: {fileID: 0}
     - target: {fileID: 5747651160361464772, guid: 831665dd373801743aa115b76f20dfae,
         type: 3}
@@ -67,5 +67,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1475642687717803547, guid: 831665dd373801743aa115b76f20dfae,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 831665dd373801743aa115b76f20dfae, type: 3}

@@ -28,6 +28,9 @@ public class PlayerInput : MonoBehaviour
         Vector2 aimInput = new Vector2(m_playerInputController.GetAxisRaw("Aim Horizontal"), m_playerInputController.GetAxisRaw("Aim Vertical"));
         m_playerMovementController.SetAimInput(aimInput);
 
+        Vector2 moveInput = new Vector2(m_playerInputController.GetAxisRaw("Move Horizontal"), m_playerInputController.GetAxisRaw("Move Vertical"));
+        m_playerMovementController.SetMoveInput(moveInput);
+
         if (m_playerInputController.GetButtonDown("Launch"))
         {
             m_playerMovementController.OnLaunchInputDown();
