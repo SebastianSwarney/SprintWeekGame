@@ -151,7 +151,6 @@ public class PlayerMovementController : MonoBehaviour
     {
         m_gameComponent = GetComponent<PlayerGameComponent>();
         m_rigidbody = GetComponent<Rigidbody2D>();
-        //m_targetLine = GetComponent<LineRenderer>();
         m_pushVisualLerp = m_pushVisual.GetComponent<LerpColor>();
         m_collider = GetComponentInChildren<Collider2D>();
 
@@ -198,6 +197,27 @@ public class PlayerMovementController : MonoBehaviour
                 {
                     ReleaseAimInput();
                 }
+            }
+
+            ////
+
+            if (m_moveInput != Vector2.zero)
+            {
+                if (!m_isSlowingDown)
+                {
+                    m_isSlowingDown = true;
+
+                    if (CheckOverBuffer(ref m_breakBufferTimer, ref m_breakBufferTime, m_breakBufferCoroutine) || m_resetAfterLaunch)
+                    {
+                        StartCoroutine(SlowDown());
+                        m_resetAfterLaunch = false;
+                    }
+                }
+            }
+
+            if (m_moveInput == Vector2.zero)
+            {
+                m_isSlowingDown = false;
             }
 
             AimCrosshair();
