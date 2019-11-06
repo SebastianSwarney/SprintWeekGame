@@ -158,6 +158,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (m_vunerableState == VulnerableState.Vulnerable)
         {
             m_collider.gameObject.layer = m_playerVulnerableLayer;
@@ -166,6 +167,7 @@ public class PlayerMovementController : MonoBehaviour
         {
             m_collider.gameObject.layer = m_playerInvulnerableLayer;
         }
+        */
 
         if (m_movementControll == MovementControllState.MovementEnabled)
         {
