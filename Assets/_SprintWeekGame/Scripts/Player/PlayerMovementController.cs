@@ -97,6 +97,11 @@ public class PlayerMovementController : MonoBehaviour
 
     public float m_critTreshhold;
 
+    public LerpScale m_hitArrow;
+    public LineRenderer m_hitLine;
+    public float m_maxHitVisualLength;
+    public float m_minHitVisualLength;
+
     private float m_pushBufferTimer;
     private Coroutine m_pushBufferCorutine;
     private LerpColor m_pushVisualLerp;
@@ -110,6 +115,7 @@ public class PlayerMovementController : MonoBehaviour
     public float m_aimSlowDownSpeed;
     public float m_aimSlowDownTime;
     private float m_aimSlowDownTimer;
+    public LineRenderer m_targetLine;
 
     private Vector2 m_lastAim;
     private Vector3 m_lastPos;
@@ -124,7 +130,6 @@ public class PlayerMovementController : MonoBehaviour
     public GameObject m_hitPlayerEffect;
     public GameObject m_playerDeathEffect;
 
-    private LineRenderer m_targetLine;
     [Space]
     #endregion
 
@@ -146,11 +151,15 @@ public class PlayerMovementController : MonoBehaviour
     {
         m_gameComponent = GetComponent<PlayerGameComponent>();
         m_rigidbody = GetComponent<Rigidbody2D>();
-        m_targetLine = GetComponent<LineRenderer>();
+        //m_targetLine = GetComponent<LineRenderer>();
         m_pushVisualLerp = m_pushVisual.GetComponent<LerpColor>();
         m_collider = GetComponentInChildren<Collider2D>();
 
         m_targetLine.enabled = false;
+        m_hitLine.enabled = false;
+
+        m_hitArrow.gameObject.SetActive(false);
+
         m_pushBufferCorutine = StartCoroutine(RunBufferTimer((x) => m_pushBufferTimer = (x), m_pushBufferTime));
 
         m_breakBufferCoroutine = StartCoroutine(RunBufferTimer((x) => m_breakBufferTimer = (x), m_breakBufferTime));
@@ -502,14 +511,32 @@ public class PlayerMovementController : MonoBehaviour
         }
 
         float stunTime = Mathf.Lerp(m_minPushStunTime, m_maxPushStunTime, p_incomingSpeed);
-        float effectAmount = Mathf.Lerp(m_minPushStunShake, m_maxPushStunShake, p_incomingSpeed);
+        float shakeAmount = Mathf.Lerp(m_minPushStunShake, m_maxPushStunShake, p_incomingSpeed);
         float pushForce = Mathf.Lerp(m_minPushForce, m_maxPushForce, p_incomingSpeed);
+        float visualDst = Mathf.Lerp(m_minHitVisualLength, m_maxHitVisualLength, p_incomingSpeed);
 
         float t = 0;
 
         m_movementControll = MovementControllState.MovementDisabled;
 
-        iTween.ShakePosition(gameObject, Vector3.one * effectAmount, stunTime);
+        m_hitLine.enabled = true;
+        m_hitArrow.gameObject.SetActive(true);
+
+        Vector3 hitVisualPos = transform.position + (p_hitDir * visualDst);
+
+        float angle = Mathf.Atan2(p_hitDir.y, p_hitDir.x) * Mathf.Rad2Deg;
+        Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
+
+        m_hitArrow.transform.position = hitVisualPos;
+        m_hitArrow.transform.rotation = rot;
+        m_hitArrow.FindLerpProgress(p_incomingSpeed);
+
+        m_hitLine.SetPosition(0, transform.position);
+        m_hitLine.SetPosition(1, hitVisualPos);
+
+        
+
+        iTween.ShakePosition(gameObject, Vector3.one * shakeAmount, stunTime);
 
         while (t < stunTime)
         {
@@ -520,6 +547,9 @@ public class PlayerMovementController : MonoBehaviour
 
             yield return null;
         }
+
+        m_hitLine.enabled = false;
+        m_hitArrow.gameObject.SetActive(false);
 
         m_rigidbody.AddForce(p_hitDir * pushForce, ForceMode2D.Impulse);
 

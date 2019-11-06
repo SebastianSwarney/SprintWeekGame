@@ -146,10 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 701b18f8376f757469c8759b0d5e1cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_levelToSelect: 
   m_selectPunchTime: 0.3
   m_selectPunchAmount: 0.5
-  m_selectPunchCurveUp:
+  m_selectPunchCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -164,15 +163,16 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 3.3393312
-      outSlope: 3.3393312
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.027127028
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_levelToSelect: 
 --- !u!114 &1299586153596940577
 MonoBehaviour:
   m_ObjectHideFlags: 0

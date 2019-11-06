@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class StartManager : MonoBehaviour
 {
     public string gameSceneName;
-    
 
     public void StartGame()
     {

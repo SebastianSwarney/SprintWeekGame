@@ -363,7 +363,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_critZoomAmount: 10
+  m_critZoomAmount: 15
   m_critZoomTime: 0.3
   m_cirtZoomOutTime: 0.2
 --- !u!114 &3600775922021904042
