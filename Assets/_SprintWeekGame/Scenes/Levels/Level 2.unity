@@ -346,7 +346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_playerMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 6144
   m_enter: 0
 --- !u!1 &141390641
 GameObject:
@@ -2152,7 +2152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_playerMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 6144
   m_enter: 1
 --- !u!1 &1696246235
 GameObject:

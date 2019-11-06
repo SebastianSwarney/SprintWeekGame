@@ -653,6 +653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_movementControll: 1
+  m_vunerableState: 0
   m_events:
     m_onLaunchChargeEvent:
       m_PersistentCalls:
@@ -796,6 +797,8 @@ MonoBehaviour:
   m_wallMask:
     serializedVersion: 2
     m_Bits: 512
+  m_playerVulnerableLayer: 11
+  m_playerInvulnerableLayer: 12
   m_lastHitPlayer: {fileID: 0}
   m_maxPushForce: 500
   m_minPushForce: 50

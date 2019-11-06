@@ -11,6 +11,9 @@ public class PlayerMovementController : MonoBehaviour
     public enum MovementControllState {MovementEnabled, MovementDisabled}
     public MovementControllState m_movementControll;
 
+    public enum VulnerableState { Vulnerable, Invulnerable }
+    public VulnerableState m_vunerableState;
+
     #region Events
     [System.Serializable]
     public struct Events
@@ -64,6 +67,8 @@ public class PlayerMovementController : MonoBehaviour
     [Header("Bounce Properties")]
     public LayerMask m_playerMask;
     public LayerMask m_wallMask;
+    public int m_playerVulnerableLayer;
+    public int m_playerInvulnerableLayer;
 
     [HideInInspector]
     public PlayerGameComponent m_lastHitPlayer;
@@ -135,12 +140,15 @@ public class PlayerMovementController : MonoBehaviour
     private bool m_isSlowingDown;
     private bool m_resetAfterLaunch;
 
+    private Collider2D m_collider;
+
     private void Start()
     {
         m_gameComponent = GetComponent<PlayerGameComponent>();
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_targetLine = GetComponent<LineRenderer>();
         m_pushVisualLerp = m_pushVisual.GetComponent<LerpColor>();
+        m_collider = GetComponentInChildren<Collider2D>();
 
         m_targetLine.enabled = false;
         m_pushBufferCorutine = StartCoroutine(RunBufferTimer((x) => m_pushBufferTimer = (x), m_pushBufferTime));
@@ -150,6 +158,15 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Update()
     {
+        if (m_vunerableState == VulnerableState.Vulnerable)
+        {
+            m_collider.gameObject.layer = m_playerVulnerableLayer;
+        }
+        else
+        {
+            m_collider.gameObject.layer = m_playerInvulnerableLayer;
+        }
+
         if (m_movementControll == MovementControllState.MovementEnabled)
         {
             if (m_aimInput != Vector2.zero)
@@ -414,7 +431,6 @@ public class PlayerMovementController : MonoBehaviour
 
         float pushRadius = Mathf.Lerp(m_minPushRadius, m_maxPushRadius, m_currentSpeed);
 
-
         m_pushVisualLerp.ResetColor();
 
         float t = 0;
@@ -535,6 +551,7 @@ public class PlayerMovementController : MonoBehaviour
         m_rigidbody.simulated = false;
 
         m_movementControll = MovementControllState.MovementDisabled;
+        m_vunerableState = VulnerableState.Invulnerable;
 
         m_crosshair.gameObject.SetActive(false);
 
@@ -545,6 +562,11 @@ public class PlayerMovementController : MonoBehaviour
         m_rigidbody.simulated = true;
         m_crosshair.gameObject.SetActive(false);
         m_movementControll = MovementControllState.MovementEnabled;
+    }
+
+    public void SetPlaying()
+    {
+        m_vunerableState = VulnerableState.Vulnerable;
     }
 
     public bool CheckCollisionLayer(LayerMask p_layerMask, GameObject p_object)

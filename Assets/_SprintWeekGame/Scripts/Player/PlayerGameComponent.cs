@@ -77,6 +77,10 @@ public class PlayerGameComponent : MonoBehaviour
 
         float t = 0;
 
+        m_movementController.Respawn();
+
+        m_isDead = false;
+
         while (t < m_fadeInTime)
         {
             t += Time.deltaTime;
@@ -86,9 +90,8 @@ public class PlayerGameComponent : MonoBehaviour
             yield return null;
         }
 
-        m_movementController.Respawn();
+        m_movementController.SetPlaying();
 
-        m_isDead = false;
     }
 
     public void DecreaseLives()

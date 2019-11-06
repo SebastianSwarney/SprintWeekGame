@@ -672,7 +672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_playerMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 6144
   m_enter: 0
 --- !u!1 &190096360
 GameObject:
